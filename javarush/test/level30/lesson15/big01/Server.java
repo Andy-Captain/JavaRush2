@@ -11,7 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Server {
     private static Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
-    public static void sendBroadcastMessage(Message message){
+
+    public static void sendBroadcastMessage(Message message) {
 
         for (Map.Entry<String, Connection> entry : connectionMap.entrySet()) {
 
@@ -25,17 +26,17 @@ public class Server {
 
         }
     }
+
     public static void main(String[] args) {
         ConsoleHelper.writeMessage("Enter the port..");
         int port = ConsoleHelper.readInt();
         ServerSocket serverSocket = null;
         try {
-             serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(port);
             ConsoleHelper.writeMessage("Server starting...");
-            ConsoleHelper.writeMessage(serverSocket.getInetAddress()+" "+serverSocket);
-            while (true)
-            {
-               Handler handler = new Handler(serverSocket.accept());
+            ConsoleHelper.writeMessage(serverSocket.getInetAddress() + " " + serverSocket);
+            while (true) {
+                Handler handler = new Handler(serverSocket.accept());
                 handler.start();
 
             }
@@ -43,8 +44,7 @@ public class Server {
 
         } catch (IOException e) {
             ConsoleHelper.writeMessage("ServerSocket Exception");
-        }
-        finally {
+        } finally {
             try {
                 serverSocket.close();
             } catch (IOException e) {
@@ -56,8 +56,6 @@ public class Server {
     }
 
 
-
-
     private static class Handler extends Thread {
 
         private Socket socket;
@@ -66,6 +64,22 @@ public class Server {
             this.socket = socket;
         }
 
+        private String serverHandshake(Connection connection) throws IOException, ClassNotFoundException {
+
+            while (true) {
+                connection.send(new Message(MessageType.NAME_REQUEST));
+                Message message = connection.receive();
+                if (message.getType() == MessageType.USER_NAME) {
+                    if (message.getData() != null && !message.getData().isEmpty()) {
+                        if (!connectionMap.containsKey(message.getData())) {
+                            connectionMap.put(message.getData(), connection);
+                            connection.send(new Message(MessageType.NAME_ACCEPTED));
+                            return message.getData();
+                        }
+                    }
+                }
+            }
+        }
 
     }
 

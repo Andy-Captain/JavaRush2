@@ -88,23 +88,68 @@ public class Client {
     }
 
     public class SocketThread extends Thread {
-        protected void processIncomingMessage(String message){
+        protected void processIncomingMessage(String message) {
             ConsoleHelper.writeMessage(message);
         }
 
-        protected void informAboutAddingNewUser(String userName){
+        protected void informAboutAddingNewUser(String userName) {
 
-            ConsoleHelper.writeMessage("user : "+userName + " was added");
-        }
-        protected void informAboutDeletingNewUser(String userName){
-            ConsoleHelper.writeMessage("user : "+userName + " left the chat room");
+            ConsoleHelper.writeMessage("user : " + userName + " was added");
         }
 
-        protected void notifyConnectionStatusChanged(boolean clientConnected){
+        protected void informAboutDeletingNewUser(String userName) {
+            ConsoleHelper.writeMessage("user : " + userName + " left the chat room");
+        }
+
+        protected void notifyConnectionStatusChanged(boolean clientConnected) {
             Client.this.clientConnected = clientConnected;
             synchronized (Client.this) {
                 Client.this.notify();
             }
+        }
+
+        protected void clientHandshake() throws IOException, ClassNotFoundException {
+
+            while (true) {
+                Message message = connection.receive();
+                switch (message.getType()) {
+                    case NAME_REQUEST:
+                        String userName = getUserName();
+                        Message newMess = new Message(MessageType.USER_NAME, userName);
+                        connection.send(newMess);
+                        break;
+                    case NAME_ACCEPTED:
+                        notifyConnectionStatusChanged(true);
+                        return;
+                    default:
+                        throw new IOException("Unexpected MessageType");
+
+                }
+            }
+        }
+
+        protected void clientMainLoop() throws IOException, ClassNotFoundException {
+            while (true) {
+                Message message = connection.receive();
+                switch (message.getType()) {
+                    case TEXT:
+                        processIncomingMessage(message.getData());
+                        break;
+                    case USER_ADDED:
+                        informAboutAddingNewUser(message.getData());
+                        break;
+                    case USER_REMOVED:
+                        informAboutDeletingNewUser(message.getData());
+                        break;
+                    default:
+                        throw new IOException("Unexpected MessageType");
+
+
+                }
+
+
+            }
+
         }
 
         @Override

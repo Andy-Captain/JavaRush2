@@ -3,6 +3,7 @@ package com.javarush.test.level30.lesson15.big01;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -82,38 +83,60 @@ public class Server {
         }
 
 
-        private void sendListOfUsers(Connection connection, String userName) throws IOException{
+        private void sendListOfUsers(Connection connection, String userName) throws IOException {
 
             for (Map.Entry<String, Connection> entry : connectionMap.entrySet()) {
 
                 String name = entry.getKey();
 
-                if (!userName.equals(name))
-                {
-                    connection.send(new Message(MessageType.USER_ADDED,name));
+                if (!userName.equals(name)) {
+                    connection.send(new Message(MessageType.USER_ADDED, name));
 
 
                 }
             }
         }
 
-        private void serverMainLoop(Connection connection, String userName) throws IOException, ClassNotFoundException{
+        private void serverMainLoop(Connection connection, String userName) throws IOException, ClassNotFoundException {
 
-              while (true)
-              {
-                  Message message = connection.receive();
-                  if (message.getType() == MessageType.TEXT)
-                  {
-                      String mess = userName + ": "+message.getData();
-                      sendBroadcastMessage( new Message(MessageType.TEXT,mess));
-                  } else{
-                      ConsoleHelper.writeMessage("This message don't TEXT");
-                  }
+            while (true) {
+                Message message = connection.receive();
+                if (message.getType() == MessageType.TEXT) {
+                    String mess = userName + ": " + message.getData();
+                    sendBroadcastMessage(new Message(MessageType.TEXT, mess));
+                } else {
+                    ConsoleHelper.writeMessage("This message don't TEXT");
+                }
 
 
-              }
+            }
         }
 
+        @Override
+        public void run() {
+            String name = "";
+
+            try (Connection connection = new Connection(socket)) {
+
+                SocketAddress socketAddress = socket.getRemoteSocketAddress();
+                ConsoleHelper.writeMessage("New connection with " + socketAddress);
+
+
+                name = serverHandshake(connection);
+                sendBroadcastMessage(new Message(MessageType.USER_ADDED, name));
+                sendListOfUsers(connection, name);
+                serverMainLoop(connection, name);
+
+            } catch (IOException | ClassNotFoundException e) {
+                ConsoleHelper.writeMessage("Error with change data to remote server");
+            }
+            if (!name.isEmpty()) {
+                connectionMap.remove(name);
+                sendBroadcastMessage(new Message(MessageType.USER_REMOVED, name));
+            }
+            ConsoleHelper.writeMessage("Connection with server is closed");
+
+        }
     }
 
 }

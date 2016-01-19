@@ -3,12 +3,28 @@ package com.javarush.test.level30.lesson15.big01;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Dmitriy on 18.01.2016.
  */
 public class Server {
+    private static Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
+    public static void sendBroadcastMessage(Message message){
 
+        for (Map.Entry<String, Connection> entry : connectionMap.entrySet()) {
+
+            String key = entry.getKey();
+            Connection value = entry.getValue();
+            try {
+                value.send(message);
+            } catch (IOException e) {
+                ConsoleHelper.writeMessage("Don't send messaege to " + key);
+            }
+
+        }
+    }
     public static void main(String[] args) {
         ConsoleHelper.writeMessage("Enter the port..");
         int port = ConsoleHelper.readInt();

@@ -4,12 +4,19 @@ public class User {
     private String name;
     private String surname;
     private int age;
+    private Address address;
 
-    private String country;
-    private String city;
-    private House house;
 
     private Work work;
+    private boolean man;
+
+    public boolean isMan() {
+        return man;
+    }
+
+    public void setMan(boolean man) {
+        this.man = man;
+    }
 
     public User(String name, String surname, int age) {
         this.name = name;
@@ -41,24 +48,17 @@ public class User {
         this.age = age;
     }
 
-    public String getCountry() {
-        return country;
-    }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+    public String getBoss(){
 
-    public String getCity() {
-        return city;
+       return work.getBoss();
     }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public String getAddress() {
-        return country + " " + city + " " + house.house;
+        return address.getCountry() + " " + address.getCity() + " " + address.getHouse();
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public Work getWork() {
@@ -69,16 +69,17 @@ public class User {
         this.work = work;
     }
 
-    public  void printInfo() {
-            System.out.println("Имя: " + getName());
-            System.out.println("Фамилия: " + getSurname());
-             printAdditionalInfo();
-        }
-    public  void printAdditionalInfo() {
-            if (getAge() < 16)
-                System.out.println("Пользователь моложе 16 лет");
-            else
-                System.out.println("Пользователь старше 16 лет");
-        }
+    public void printInfo() {
+        System.out.println("Имя: " + getName());
+        System.out.println("Фамилия: " + getSurname());
+        printAdditionalInfo();
+    }
+
+    public void printAdditionalInfo() {
+        if (getAge() < 16)
+            System.out.println("Пользователь моложе 16 лет");
+        else
+            System.out.println("Пользователь старше 16 лет");
+    }
 
 }

@@ -2,10 +2,10 @@ package com.javarush.test.level29.lesson15.big01.user;
 
 public class UserHelper {
     private User userAnya = new User("Аня", "Смирнова", 10);
+
     private User userRoma = new User("Рома", "Виноградов", 30);
 
-    private boolean isManAnya = false;
-    private boolean isManRoma = true;
+
 
     public void printUsers() {
 
@@ -36,7 +36,7 @@ public class UserHelper {
     }
 
     public String getBoosName(User user) {
-        Work work = user.getWork();
-        return work.getBoss();
+
+        return user.getBoss();
     }
 }

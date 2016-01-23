@@ -1,11 +1,20 @@
 package com.javarush.test.level33.lesson10.bonus01;
 
+import org.w3c.dom.*;
+
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+import java.io.Writer;
 
 /* Комментарий внутри xml
 Реализовать метод toXmlWithComment, который должен возвращать строку - xml представление объекта obj.
@@ -27,54 +36,96 @@ import java.io.StringWriter;
 </first>
 */
 public class Solution {
-    public static String toXmlWithComment(Object obj, String tagName, String comment) throws JAXBException {
+    public static String toXmlWithComment(Object obj, String tagName, String comment) throws Exception {
         StringWriter sw = new StringWriter();
+
         JAXBContext context = JAXBContext.newInstance(obj.getClass());
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(obj, sw);
-        String strComment = "<!--" + comment + "-->";
-//        String stringObj = sw.toString();
+        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = documentBuilder.newDocument();
+        marshaller.marshal(obj, document);
+        Element node = document.getDocumentElement();  //root element
+        walker(node, document);
+
+        NodeList nodeList = document.getElementsByTagName(tagName);
+        Comment commentXml;
+
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            commentXml = document.createComment(comment);
+            nodeList.item(i).getParentNode().insertBefore(commentXml, nodeList.item(i));
+
+        }
 
 
-        String stringObj = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<second>\n" +
+        String rezult = prettyPrint(document);
 
-                "    <second>some string</second>\n" +
-
-                "    <second>some string</second>\n" +
-
-                "    <second><![CDATA[need CDATA because of < and >]]></second>\n" +
-
-                "    <second/>\n" +
-                "</second>";
-
-
-        String replaceAll = stringObj.replaceAll("<" + tagName + ">", strComment + "\n" + "    <" + tagName + ">");
-        replaceAll = replaceAll.replaceAll("<" + tagName + "/>", strComment + "\n" + "    <" + tagName + ">");
-        return replaceAll;
+        rezult = rezult.replaceAll("&amp;", "&").replaceAll("&quot;", "\"").replaceAll("&lt;", "<").
+                replaceAll("&gt;", ">").replaceAll("&apos;", "'");
+        return rezult;
     }
 
-    public static void main(String[] args) throws JAXBException {
-        Cat cat = new Cat();
-        cat.name = "Murka";
-        cat.age = 5;
-        cat.weight = 4;
-//        String s = toXmlWithComment(cat, "age", "it's a comment");
-        String s = toXmlWithComment(cat, "second", "it's a comment");
-        System.out.println(s);
+
+    public static void main(String[] args) throws Exception {
+
+        String result = Solution.toXmlWithComment(new AnExample(), "needCDATA", "it's a comment - <needCDATA>");
+
+        System.out.println(result);
 
     }
 
-    @XmlType(name = "cat")
+    @XmlType(name = "anExample")
     @XmlRootElement
-    static class Cat {
-        public String name;
-        public int age;
-        public int weight;
+    public static class AnExample {
+        public String[] needCDATA = new String[]{"need CDATA because of < and >", ""};
+    }
 
-        public Cat() {
+    public static void walker(Node node, Document dc) {
+
+        for (Node i = node.getFirstChild(); i != null; i = i.getNextSibling()) {
+            if (!i.hasChildNodes()) {
+                String context = i.getTextContent();
+
+                if (context.matches("(.*)[<>&'\"](.*)")) {
+                    String textContent = i.getTextContent();      //change CDDATA
+
+                    i.setTextContent("<![CDATA[" + textContent + "]]>");
+                }
+
+
+            } else {
+                walker(i, dc);
+            }
         }
     }
 
+
+    public static String prettyPrint(Document xml) throws Exception {
+
+        Transformer tf = TransformerFactory.newInstance().newTransformer();
+
+        tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+        tf.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        Writer out = new StringWriter();
+
+        tf.transform(new DOMSource(xml), new StreamResult(out));
+
+        return out.toString();
+
+    }
 }
+
+
+
+
+/*
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<anExample>
+    <!--it's a comment - <needCDATA>-->
+    <needCDATA><![CDATA[need CDATA because of < and >]]></needCDATA>
+    <!--it's a comment - <needCDATA>-->
+    <needCDATA/>
+</anExample>
+ */

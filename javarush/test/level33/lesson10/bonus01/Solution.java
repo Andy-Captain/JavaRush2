@@ -47,19 +47,13 @@ public class Solution {
         marshaller.marshal(obj, document);
         Element node = document.getDocumentElement();  //root element
         walker(node, document);
-
         NodeList nodeList = document.getElementsByTagName(tagName);
         Comment commentXml;
-
-        for (int i = 0; i < nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength(); i++) {    //add all comment
             commentXml = document.createComment(comment);
             nodeList.item(i).getParentNode().insertBefore(commentXml, nodeList.item(i));
-
         }
-
-
-        String rezult = prettyPrint(document);
-
+        String rezult = transormDOMtoString(document);
         rezult = rezult.replaceAll("&amp;", "&").replaceAll("&quot;", "\"").replaceAll("&lt;", "<").
                 replaceAll("&gt;", ">").replaceAll("&apos;", "'");
         return rezult;
@@ -67,14 +61,11 @@ public class Solution {
 
 
     public static void main(String[] args) throws Exception {
-
         String result = Solution.toXmlWithComment(new AnExample(), "needCDATA", "it's a comment - <needCDATA>");
-
         System.out.println(result);
-
     }
 
-    @XmlType(name = "anExample")
+    @XmlType(name = "anExample")     //example class
     @XmlRootElement
     public static class AnExample {
         public String[] needCDATA = new String[]{"need CDATA because of < and >", ""};
@@ -86,7 +77,7 @@ public class Solution {
             if (!i.hasChildNodes()) {
                 String context = i.getTextContent();
 
-                if (context.matches("(.*)[<>&'\"](.*)")) {
+                if (context.matches("(.*)[<>&'\"](.*)")) {      //if tag data contains < > & \ '
                     String textContent = i.getTextContent();      //change CDDATA
 
                     i.setTextContent("<![CDATA[" + textContent + "]]>");
@@ -100,18 +91,12 @@ public class Solution {
     }
 
 
-    public static String prettyPrint(Document xml) throws Exception {
-
+    public static String transormDOMtoString(Document xml) throws Exception {
         Transformer tf = TransformerFactory.newInstance().newTransformer();
-
         tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
         tf.setOutputProperty(OutputKeys.INDENT, "yes");
-
         Writer out = new StringWriter();
-
         tf.transform(new DOMSource(xml), new StreamResult(out));
-
         return out.toString();
 
     }
@@ -119,13 +104,3 @@ public class Solution {
 
 
 
-
-/*
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<anExample>
-    <!--it's a comment - <needCDATA>-->
-    <needCDATA><![CDATA[need CDATA because of < and >]]></needCDATA>
-    <!--it's a comment - <needCDATA>-->
-    <needCDATA/>
-</anExample>
- */

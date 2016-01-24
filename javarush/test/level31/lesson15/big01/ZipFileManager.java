@@ -11,6 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ZipFileManager {
+    // Полный путь zip файла
     private final Path zipFile;
 
     public ZipFileManager(Path zipFile) {
@@ -18,18 +19,31 @@ public class ZipFileManager {
     }
 
     public void createZip(Path source) throws Exception {
+        // Проверяем, существует ли директория, где будет создаваться архив
+        // При необходимости создаем ее
         Path zipDirectory = zipFile.getParent();
         if (Files.notExists(zipDirectory))
             Files.createDirectories(zipDirectory);
+
+        // Создаем zip поток
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+
             if (Files.isDirectory(source)) {
+                // Если архивируем директорию, то нужно получить список файлов в ней
                 FileManager fileManager = new FileManager(source);
                 List<Path> fileNames = fileManager.getFileList();
+
+                // Добавляем каждый файл в архив
                 for (Path fileName : fileNames)
                     addNewZipEntry(zipOutputStream, source, fileName);
+
             } else if (Files.isRegularFile(source)) {
+
+                // Если архивируем отдельный файл, то нужно получить его директорию и имя
                 addNewZipEntry(zipOutputStream, source.getParent(), source.getFileName());
             } else {
+
+                // Если переданный source не директория и не файл, бросаем исключение
                 throw new PathIsNotFoundException();
             }
         }
@@ -39,8 +53,11 @@ public class ZipFileManager {
         Path fullPath = filePath.resolve(fileName);
         try (InputStream inputStream = Files.newInputStream(fullPath)) {
             ZipEntry entry = new ZipEntry(fileName.toString());
+
             zipOutputStream.putNextEntry(entry);
+
             copyData(inputStream, zipOutputStream);
+
             zipOutputStream.closeEntry();
         }
     }

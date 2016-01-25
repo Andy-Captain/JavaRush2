@@ -12,4 +12,22 @@ public class Controller {
     public Controller(View view) {
         this.view = view;
     }
+
+    public void init() {
+    }
+
+    public void exit() {
+        System.exit(0);
+    }
+
+    public static void main(String[] args) {
+
+        View view1 = new View();
+        Controller controller = new Controller(view1);
+        view1.setController(controller);
+        view1.init();
+        controller.init();
+    }
+
+
 }

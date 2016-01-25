@@ -11,12 +11,16 @@ public class View extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
     }
-
+    public void init(){}
     public Controller getController() {
         return controller;
     }
 
     public void setController(Controller controller) {
         this.controller = controller;
+    }
+
+    public void exit(){
+        controller.exit();
     }
 }

@@ -20,5 +20,6 @@ public class FrameListener extends WindowAdapter {
     @Override
     public void windowClosing(WindowEvent e) {
         view.exit();
+
     }
 }

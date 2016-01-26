@@ -25,17 +25,8 @@ public class View extends JFrame implements ActionListener {
         try {
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | InstantiationException | IllegalAccessException e) {
             ExceptionHandler.log(e);
-        } catch (UnsupportedLookAndFeelException e) {
-            ExceptionHandler.log(e);
-
-        } catch (InstantiationException e) {
-            ExceptionHandler.log(e);
-
-        } catch (IllegalAccessException e) {
-            ExceptionHandler.log(e);
-
         }
 
 
@@ -100,6 +91,20 @@ public class View extends JFrame implements ActionListener {
 
 
     public void selectedTabChanged() {
+
+        int selectedIndex = tabbedPane.getSelectedIndex();
+         if (selectedIndex == 0)
+         {
+             String text = plainTextPane.getText();
+             controller.setPlainText(text);
+         }
+        else if(selectedIndex == 1)
+         {
+             String plainText = controller.getPlainText();
+             plainTextPane.setText(plainText);
+
+                   }
+        resetUndo();
 
     }
 

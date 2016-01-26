@@ -1,6 +1,9 @@
 package com.javarush.test.level32.lesson15.big01;
 
+import com.javarush.test.level32.lesson15.big01.listeners.UndoListener;
+
 import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 import java.io.File;
 
 public class Controller {
@@ -31,5 +34,15 @@ public class Controller {
 
     public HTMLDocument getDocument() {
         return document;
+    }
+
+    public void resetDocument() {
+        UndoListener undoListener = view.getUndoListener();
+        if (document != null) {
+            document.removeUndoableEditListener(undoListener);
+        }
+        document = (HTMLDocument) new HTMLEditorKit().createDefaultDocument();
+        document.addUndoableEditListener(undoListener);
+        view.update();
     }
 }

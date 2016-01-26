@@ -5,9 +5,6 @@ import com.javarush.test.level32.lesson15.big01.View;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-/**
- * Created by Dmitriy on 26.01.2016.
- */
 public class UndoAction extends AbstractAction {
 
      private View view;
@@ -17,6 +14,6 @@ public class UndoAction extends AbstractAction {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-
+      view.undo();
     }
 }

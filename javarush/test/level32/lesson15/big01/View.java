@@ -36,6 +36,27 @@ public class View extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+        String actionCommand = e.getActionCommand();
+        switch (actionCommand) {
+            case "Новый":
+                controller.createNewDocument();
+                break;
+            case "Открыть":
+                controller.openDocument();
+                break;
+            case "Сохранить":
+                controller.saveDocument();
+                break;
+            case "Сохранить как...":
+                controller.saveDocumentAs();
+                break;
+            case "Выход":
+                controller.exit();
+                break;
+            case "О программе":
+                this.showAbout();
+                break;
+        }
     }
 
     public void init() {
@@ -93,17 +114,14 @@ public class View extends JFrame implements ActionListener {
     public void selectedTabChanged() {
 
         int selectedIndex = tabbedPane.getSelectedIndex();
-         if (selectedIndex == 0)
-         {
-             String text = plainTextPane.getText();
-             controller.setPlainText(text);
-         }
-        else if(selectedIndex == 1)
-         {
-             String plainText = controller.getPlainText();
-             plainTextPane.setText(plainText);
+        if (selectedIndex == 0) {
+            String text = plainTextPane.getText();
+            controller.setPlainText(text);
+        } else if (selectedIndex == 1) {
+            String plainText = controller.getPlainText();
+            plainTextPane.setText(plainText);
 
-                   }
+        }
         resetUndo();
 
     }
@@ -155,12 +173,14 @@ public class View extends JFrame implements ActionListener {
         tabbedPane.setSelectedIndex(0);
         resetUndo();
     }
-    public void update(){
+
+    public void update() {
 
         HTMLDocument document = controller.getDocument();
         htmlTextPane.setDocument(document);
     }
-    public void showAbout(){
-        JOptionPane.showMessageDialog(getContentPane(), "Creator JavaRush","About Program", JOptionPane.INFORMATION_MESSAGE);
+
+    public void showAbout() {
+        JOptionPane.showMessageDialog(getContentPane(), "Creator JavaRush", "About Program", JOptionPane.INFORMATION_MESSAGE);
     }
 }

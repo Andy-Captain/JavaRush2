@@ -15,11 +15,11 @@ public class View extends JFrame implements ActionListener {
     private JTextPane htmlTextPane = new JTextPane();
     private JEditorPane plainTextPane = new JEditorPane();
 
-    public View(){
+    public View() {
 
         try {
             UIManager.setLookAndFeel(
-                        UIManager.getSystemLookAndFeelClassName());
+                    UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException e) {
             ExceptionHandler.log(e);
         } catch (UnsupportedLookAndFeelException e) {
@@ -65,14 +65,14 @@ public class View extends JFrame implements ActionListener {
 
     public void initMenuBar() {
         JMenuBar jMenuBar = new JMenuBar();
-        MenuHelper.initFileMenu(this,jMenuBar);
-        MenuHelper.initEditMenu(this,jMenuBar);
-        MenuHelper.initStyleMenu(this,jMenuBar);
-        MenuHelper.initAlignMenu(this,jMenuBar);
-        MenuHelper.initColorMenu(this,jMenuBar);
-        MenuHelper.initFontMenu(this,jMenuBar);
-        MenuHelper.initHelpMenu(this,jMenuBar);
-        getContentPane().add(jMenuBar,BorderLayout.NORTH);
+        MenuHelper.initFileMenu(this, jMenuBar);
+        MenuHelper.initEditMenu(this, jMenuBar);
+        MenuHelper.initStyleMenu(this, jMenuBar);
+        MenuHelper.initAlignMenu(this, jMenuBar);
+        MenuHelper.initColorMenu(this, jMenuBar);
+        MenuHelper.initFontMenu(this, jMenuBar);
+        MenuHelper.initHelpMenu(this, jMenuBar);
+        getContentPane().add(jMenuBar, BorderLayout.NORTH);
     }
 
     public void initEditor() {
@@ -84,7 +84,7 @@ public class View extends JFrame implements ActionListener {
         tabbedPane.addTab("Текст", jScrollPane1);
         tabbedPane.setPreferredSize(new Dimension(500, 500));
         tabbedPane.addChangeListener(new TabbedPaneChangeListener(this));
-        getContentPane().add(tabbedPane,BorderLayout.CENTER);
+        getContentPane().add(tabbedPane, BorderLayout.CENTER);
     }
 
     public void initGui() {
@@ -96,5 +96,13 @@ public class View extends JFrame implements ActionListener {
 
     public void selectedTabChanged() {
 
+    }
+
+    public boolean canUndo() {
+        return false;
+    }
+
+    public boolean canRedo() {
+        return false;
     }
 }

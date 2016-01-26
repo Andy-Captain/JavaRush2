@@ -2,13 +2,11 @@ package com.javarush.test.level32.lesson15.big01;
 
 import com.javarush.test.level32.lesson15.big01.listeners.UndoListener;
 
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 
 public class Controller {
 
@@ -51,24 +49,24 @@ public class Controller {
         view.update();
     }
 
-    public void setPlainText(String text){
+    public void setPlainText(String text) {
 
-       resetDocument();
+        resetDocument();
         StringReader stringReader = new StringReader(text);
         try {
-            new HTMLEditorKit().read(stringReader,document,0);
+            new HTMLEditorKit().read(stringReader, document, 0);
         } catch (IOException | BadLocationException e) {
-           ExceptionHandler.log(e);
+            ExceptionHandler.log(e);
         }
 
     }
 
-    public String getPlainText(){
+    public String getPlainText() {
 
         StringWriter stringWriter = new StringWriter();
 
         try {
-            new HTMLEditorKit().write(stringWriter,document,0,document.getLength());
+            new HTMLEditorKit().write(stringWriter, document, 0, document.getLength());
         } catch (IOException | BadLocationException e) {
             ExceptionHandler.log(e);
 
@@ -93,6 +91,23 @@ public class Controller {
     }
 
     public void saveDocumentAs() {
+        view.selectHtmlTab();
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setFileFilter(new HTMLFileFilter());
+        int dialog = jFileChooser.showSaveDialog(view);
+        if (dialog == JFileChooser.APPROVE_OPTION) {
+            currentFile = jFileChooser.getSelectedFile();
+            view.setTitle(currentFile.getName());
+            try (FileWriter fileWriter = new FileWriter(currentFile)) {
+
+                new HTMLEditorKit().write(fileWriter, document, 0, document.getLength());
+
+            } catch (IOException | BadLocationException e) {
+                ExceptionHandler.log(e);
+            }
+
+        }
+
 
     }
 }

@@ -5,6 +5,7 @@ import com.javarush.test.level32.lesson15.big01.listeners.TabbedPaneChangeListen
 import com.javarush.test.level32.lesson15.big01.listeners.UndoListener;
 
 import javax.swing.*;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -139,7 +140,22 @@ public class View extends JFrame implements ActionListener {
     public void resetUndo() {
         undoManager.discardAllEdits();
     }
-    public boolean isHtmlTabSelected(){
-       return tabbedPane.getSelectedIndex() == 0;
+
+    public boolean isHtmlTabSelected() {
+        return tabbedPane.getSelectedIndex() == 0;
+    }
+
+    public void selectHtmlTab() {
+
+        tabbedPane.setSelectedIndex(0);
+        resetUndo();
+    }
+    public void update(){
+
+        HTMLDocument document = controller.getDocument();
+        htmlTextPane.setDocument(document);
+    }
+    public void showAbout(){
+        JOptionPane.showMessageDialog(getContentPane(), "Creator JavaRush","About Program", JOptionPane.INFORMATION_MESSAGE);
     }
 }

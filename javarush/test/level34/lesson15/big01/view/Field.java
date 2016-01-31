@@ -19,5 +19,6 @@ public class Field extends JPanel{
 
     public void paint(Graphics g){
 
+
     }
 }

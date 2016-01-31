@@ -1,6 +1,7 @@
 package com.javarush.test.level34.lesson15.big01.view;
 
 import com.javarush.test.level34.lesson15.big01.controller.Controller;
+import com.javarush.test.level34.lesson15.big01.controller.EventListener;
 
 import javax.swing.*;
 
@@ -22,4 +23,9 @@ public class View extends JFrame {
         setTitle("Сокобан");
         setVisible(true);
     }
+
+    public void setEventListener(EventListener eventListener) {
+        field.setEventListener(eventListener);
+    }
+
 }

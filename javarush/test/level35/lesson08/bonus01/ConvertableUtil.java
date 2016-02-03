@@ -6,9 +6,14 @@ import java.util.Map;
 
 public class ConvertableUtil {
 
-    public static Map convert(List list) {
+    public static Map<?,? extends Convertable> convert(List<? extends Convertable> list) {
+        Map<Object, Convertable<?>> result = new HashMap();
+        for (Convertable<?> convertable : list) {
+            Object key = convertable.getKey();
+             result.put(key,convertable);
+        }
 
-        Map result = new HashMap();
+
         return result;
     }
 }

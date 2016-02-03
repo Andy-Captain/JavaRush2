@@ -25,8 +25,8 @@ public class Solution {
         users.add(new ConvertableUser(235, "Second User"));
         users.add(new ConvertableUser(236, "Third User"));
 
-        Map<Integer, ConvertableUser> newMap = ConvertableUtil.convert(users);
-        System.out.println(newMap);
+        Map<Integer, ConvertableUser> newMap = (Map<Integer, ConvertableUser>) ConvertableUtil.convert(users);
+         System.out.println(newMap);
         //{236=ConvertableUser{id=236, name='Third User'},
         // 235=ConvertableUser{id=235, name='Second User'},
         // 234=ConvertableUser{id=234, name='First User'}}
@@ -38,7 +38,7 @@ public class Solution {
         books.add(new ConvertableBook("Second Book"));
         books.add(new ConvertableBook("Third Book"));
 
-        Map<String, ConvertableBook> bookMap = ConvertableUtil.convert(books);
+        Map<String, ConvertableBook> bookMap = (Map<String, ConvertableBook>) ConvertableUtil.convert(books);
         System.out.println(bookMap);
         //{Third Book=ConvertableBook{name='Third Book'},
         // First Book=ConvertableBook{name='First Book'},

@@ -1,5 +1,8 @@
 package com.javarush.test.level34.lesson15.big01.model;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,19 +15,79 @@ public class LevelLoader {
         this.levels = levels;
     }
 
-    public GameObjects getLevel(int level){
+    public GameObjects getLevel(int level) {
+
+        while (level > 60)
+        {
+            level = level - 60;
+        }
         Set<Wall> wallSet = new HashSet<>();
-        wallSet.add(new Wall((Model.FIELD_SELL_SIZE/2)*2,(Model.FIELD_SELL_SIZE/2)*2));
-        wallSet.add(new Wall((Model.FIELD_SELL_SIZE/2)*4,(Model.FIELD_SELL_SIZE/2)*4));
-        wallSet.add(new Wall((Model.FIELD_SELL_SIZE/2)*6,(Model.FIELD_SELL_SIZE/2)*6));
-
         Set<Box> boxSet = new HashSet<>();
-        boxSet.add(new Box((Model.FIELD_SELL_SIZE/2)*8,(Model.FIELD_SELL_SIZE/2)*8));
         Set<Home> homeSet = new HashSet<>();
-        homeSet.add(new Home((Model.FIELD_SELL_SIZE/2)*10,(Model.FIELD_SELL_SIZE/2)*10));
-        Player player = new Player((Model.FIELD_SELL_SIZE/2)*12,(Model.FIELD_SELL_SIZE/2)*12);
+        Player player = new Player(0,0);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(levels.toString()));
+            while(true)
+            {
+                String lev = reader.readLine();
+                if (("Maze: " + level).equals(lev))
+                {break;}
+            }
+              reader.readLine();
+            String[] split = reader.readLine().split(" ");
+            String[] split2 = reader.readLine().split(" ");
 
-        return new GameObjects(wallSet,boxSet,homeSet,player);
+            int width = Integer.parseInt(split[2]);
+            int height = Integer.parseInt(split2[2]);
+            reader.readLine();
+            reader.readLine();
+            reader.readLine();
+
+            for (int y = 0; y < height; y++ )
+            {
+                String line = reader.readLine();
+                char[] chars = line.toCharArray();
+                for(int x = 0; x < width; x++)
+                {
+                    char aChar = chars[x];
+
+                    switch (aChar)
+                    {
+                        case ' ': break;
+                        case 'X': wallSet.add(new Wall(x*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2,y*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2));
+                            break;
+                        case '*' :
+                            boxSet.add(new Box(x*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2,y*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2));
+                            break;
+                        case '.':
+                            homeSet.add(new Home(x*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2,y*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2));
+                            break;
+                        case '&' :
+                            boxSet.add(new Box(x*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2,y*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2));
+                            homeSet.add(new Home(x*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2,y*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2));
+                            break;
+                        case '@' :
+                            player = new Player(x*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2,y*Model.FIELD_SELL_SIZE + Model.FIELD_SELL_SIZE/2);
+                            break;
+
+
+
+
+                    }
+
+
+
+                }
+
+
+            }
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       return new GameObjects(wallSet,boxSet,homeSet,player);
     }
 
 }

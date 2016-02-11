@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UsersView implements View{
     private Controller controller;
-    
+
     
     @Override
     public void refresh(ModelData modelData) {
@@ -29,5 +29,10 @@ public class UsersView implements View{
 
         controller.onShowAllUsers();
     }
+    public void fireEventShowDeletedUsers() {
+        controller.onShowAllDeletedUsers();
+    }
+
+
 
 }

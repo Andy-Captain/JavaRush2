@@ -24,4 +24,11 @@ public class Controller {
     }
 
 
+    public void onShowAllDeletedUsers() {
+        model.loadDeletedUsers();
+        usersView.refresh(model.getModelData());
+    }
+
+
+
 }

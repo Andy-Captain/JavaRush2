@@ -8,6 +8,14 @@ package com.javarush.test.level36.lesson08.bonus01;
 Имена переменных и методов не изменяйте.
 */
 public class Solution {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException {
+        RedBlackTree redBlackTree = new RedBlackTree();
+        redBlackTree.insert(10);
+        redBlackTree.insert(20);
+        redBlackTree.insert(30);
+        redBlackTree.insert(40);
+        NodeHelperTestSolution.getEmptyNode();
+        System.out.println(NodeHelperTestSolution.getFromTreeNodeByName("current",redBlackTree));
+
     }
 }

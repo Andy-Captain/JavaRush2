@@ -27,4 +27,13 @@ public class Order {
     public boolean isEmpty() {
            return dishes == null || dishes.isEmpty();
        }
+
+    public int getTotalCookingTime(){
+        int duration = 0;
+        for (Dish dish : dishes) {
+            duration +=dish.getDuration();
+
+        }
+       return duration;
+    }
 }

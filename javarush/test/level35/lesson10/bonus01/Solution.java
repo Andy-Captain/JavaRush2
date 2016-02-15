@@ -29,12 +29,6 @@ public class Solution {
 
         Set<Animal> rezSet = new HashSet<>();
 
-        if (!pathToAnimals.endsWith("\\")) {
-            pathToAnimals += "\\";
-        }
-        if (pathToAnimals.endsWith("/")) {
-            pathToAnimals += "/";
-        }
 
         File file = new File(pathToAnimals);
 
@@ -44,42 +38,32 @@ public class Solution {
                 return name.endsWith(".class");
             }
         });
-        final String finalPathToAnimals = pathToAnimals;
+        final String finalPathToAnimals = file.getAbsolutePath()+File.separator;
+
         for (String s : list) {
 
 
             ClassLoader classLoader = new ClassLoader() {
                 @Override
                 protected Class<?> findClass(String name) throws ClassNotFoundException {
-                    byte bytes[] = null;
-                    String fullPath = finalPathToAnimals + name;
+                    byte bytes[] = new byte[0];
+
 
                     try {
-                        InputStream is = new FileInputStream(new File(fullPath));
-
-                        long length = new File(fullPath).length();
-
-                        bytes = new byte[(int) length];
-
-                        int offset = 0;
-                        int numRead = 0;
-                        while (offset < bytes.length
-                                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-                            offset += numRead;
-                        }
-
-                        is.close();
-
-
+                        bytes = getBytesFrFile(finalPathToAnimals + name + ".class");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+
                     return defineClass(null, bytes, 0, bytes.length);
                 }
             };
 
             try {
-                Class<?> aClass = classLoader.loadClass(s);
+                String className = s.substring(0, s.length() - 6);
+
+                Class<?> aClass = classLoader.loadClass(className.toLowerCase());
 
                 Constructor<?>[] constructors = aClass.getConstructors();
 
@@ -97,7 +81,7 @@ public class Solution {
                 for (Class<?> anInterface : interfaces) {
 
 
-                    if (anInterface.getSimpleName().equals("Animal")) {
+                    if (anInterface.getSimpleName().toLowerCase().equals("Animal".toLowerCase())) {
 
                         inter = true;
 
@@ -107,7 +91,11 @@ public class Solution {
 
 
                 if (inter && constr) {
-                    Object o = aClass.newInstance();
+
+
+
+                    Object  o = aClass.newInstance();
+
                     rezSet.add((Animal) o);
                 }
 
@@ -122,4 +110,29 @@ public class Solution {
 
         return rezSet;
     }
+    public static byte[] getBytesFrFile(String path) throws IOException {
+            File file = new File(path);
+            InputStream is = new FileInputStream(file);
+
+            long length = file.length();
+            if (length > Integer.MAX_VALUE) {
+
+            }
+
+            byte[] bytes = new byte[(int) length];
+
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length
+                    && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+                offset += numRead;
+            }
+
+            if (offset < bytes.length) {
+                throw new IOException();
+            }
+
+            is.close();
+            return bytes;
+        }
 }

@@ -44,13 +44,15 @@ public class Solution {
             ClassLoader loader = new ClassLoader() {
                 @Override
                 protected Class<?> findClass(String name) throws ClassNotFoundException {
+                    byte[] temp = new byte[0];
                     try {
-                        byte[] temp = getBytesFrFile(finalPath + name + ".class");
-                        return defineClass(null, temp, 0, temp.length);
+                        temp = getBytesFrFile(finalPath + name + ".class");
                     } catch (IOException e) {
 
-                        throw new ClassNotFoundException();
+                       e.printStackTrace();
                     }
+                    return defineClass(null, temp, 0, temp.length);
+
                 }
             };
             String className = classFile.substring(0, classFile.length() - 6);
@@ -67,7 +69,7 @@ public class Solution {
                 }
 
             } catch (ClassNotFoundException e) {
-                throw new ClassNotFoundException();
+                e.printStackTrace();
 
             }
         }

@@ -1,11 +1,9 @@
 package com.javarush.test.level37.lesson04.big01.female;
 
+import com.javarush.test.level37.lesson04.big01.AbstractFactory;
 import com.javarush.test.level37.lesson04.big01.Human;
-import com.javarush.test.level37.lesson04.big01.male.KidBoy;
-import com.javarush.test.level37.lesson04.big01.male.Man;
-import com.javarush.test.level37.lesson04.big01.male.TeenBoy;
 
-public class FemaleFactory {
+public class FemaleFactory implements AbstractFactory{
 
 
 

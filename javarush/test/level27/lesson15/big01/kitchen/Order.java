@@ -6,9 +6,6 @@ import com.javarush.test.level27.lesson15.big01.Tablet;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by Dmitriy on 24.12.2015.
- */
 public class Order {
     private List<Dish> dishes;
     private Tablet tablet;
@@ -20,10 +17,10 @@ public class Order {
 
     @Override
     public String toString() {
-        if ( dishes.isEmpty()|| dishes == null ) {
+        if ( dishes.isEmpty()) {
             return "";
         } else {
-            return "Your order: " + dishes.toString() + " of " + tablet;
+            return "Your order: " + dishes + " of " + tablet;
         }
     }
 

@@ -8,9 +8,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Dmitriy on 24.12.2015.
- */
 public class ConsoleHelper {
 
     private static final BufferedReader console = new BufferedReader(new InputStreamReader(System.in));

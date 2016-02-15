@@ -7,9 +7,6 @@ import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by Dmitriy on 24.12.2015.
- */
 public class Tablet extends Observable {
    private final static Logger logger = Logger.getLogger(Tablet.class.getName());
     private final int number;
@@ -22,12 +19,12 @@ public class Tablet extends Observable {
         Order order = null;
         try {
             order = new Order(this);
-            if (!order.isEmpty()) {
+
                 ConsoleHelper.writeMessage(order.toString());
                setChanged();
                notifyObservers(order);
 
-            }
+
 
         }
         catch (IOException e) {
@@ -35,9 +32,7 @@ public class Tablet extends Observable {
         }
     }
 
-    public int getNumber() {
-        return number;
-    }
+
 
     @Override
     public String toString() {

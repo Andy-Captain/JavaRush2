@@ -1,6 +1,7 @@
 package com.javarush.test.level27.lesson15.big01;
 
 import com.javarush.test.level27.lesson15.big01.kitchen.Cook;
+import com.javarush.test.level27.lesson15.big01.kitchen.Waitor;
 
 public class Restaurant {
 
@@ -10,6 +11,8 @@ public class Restaurant {
         Cook cook = new Cook("Amigo");
         Tablet tablet = new Tablet(5);
         tablet.addObserver(cook);
+        Waitor waitor = new Waitor();
+        cook.addObserver(waitor);
         tablet.createOrder();
     }
 }

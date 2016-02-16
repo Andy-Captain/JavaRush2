@@ -8,11 +8,12 @@ public class Restaurant {
     public static void main(String[] args) {
 
 
+        Waitor waitor = new Waitor();
         Cook cook = new Cook("Amigo");
+        cook.addObserver(waitor);
+
         Tablet tablet = new Tablet(5);
         tablet.addObserver(cook);
-        Waitor waitor = new Waitor();
-        cook.addObserver(waitor);
         tablet.createOrder();
     }
 }

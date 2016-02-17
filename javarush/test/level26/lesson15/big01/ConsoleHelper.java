@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ConsoleHelper {
-   private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    public static void writeMessage(String message)
-    {
+    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+    public static void writeMessage(String message) {
         System.out.println(message);
     }
 
-    public static String readString()  {
+    public static String readString() {
 
         String word = null;
         try {
@@ -22,26 +22,26 @@ public class ConsoleHelper {
 
         return word;
     }
+
     public static String askCurrencyCode() throws IOException {
 
         String codeValut = "";
         writeMessage("Enter the currency code(3 symbols): ");
         codeValut = readString();
-        while (codeValut.length() != 3)
-        {
+        while (codeValut.length() != 3) {
 
 
             writeMessage("You've entered wrong code. Try again:");
             codeValut = readString();
 
         }
-         codeValut = codeValut.toUpperCase();
+        codeValut = codeValut.toUpperCase();
         return codeValut;
     }
 
-    public static  String[] getValidTwoDigits(String currencyCode) throws IOException {
+    public static String[] getValidTwoDigits(String currencyCode) throws IOException {
 
-         String [] arrayTwoDigital;
+        String[] arrayTwoDigital;
         writeMessage("Input denomination and count, please:");
         while (true) {
 
@@ -51,22 +51,16 @@ public class ConsoleHelper {
 
             int k;
             int l;
-            try
-            {
+            try {
                 k = Integer.parseInt(arrayTwoDigital[0]);
                 l = Integer.parseInt(arrayTwoDigital[1]);
-                if (k <= 0 || l <= 0 || arrayTwoDigital.length > 2)
-                {
+                if (k <= 0 || l <= 0 || arrayTwoDigital.length > 2) {
                     writeMessage("Incorrect input! Retry input, please:");
                     continue;
-                }
-                else break;
+                } else break;
 
 
-
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 writeMessage("invalid.data");
 
             }
@@ -75,5 +69,22 @@ public class ConsoleHelper {
         }
         return arrayTwoDigital;
     }
+
+    public static Operation askOperation() {
+
+        writeMessage("Enter the operation: 1 -INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT; ");
+        while (true) {
+            String s = readString();
+            int choise = Integer.parseInt(s);
+            if (choise > 0 && choise < 5) {
+                return Operation.getAllowableOperationByOrdinal(choise);
+            } else {
+                writeMessage("Incorrect input! Retry input, please:");
+            }
+
+        }
+
+    }
+
 
 }

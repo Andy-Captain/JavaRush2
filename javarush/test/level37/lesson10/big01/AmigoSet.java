@@ -1,12 +1,12 @@
 package com.javarush.test.level37.lesson10.big01;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 public class AmigoSet<E> extends AbstractSet<E> implements Serializable, Cloneable, Set<E> {
 
     private final static Object PRESENT = new Object();
-    private HashMap<E, Object> map;
+    private transient HashMap<E, Object> map;
 
     public AmigoSet() {
         map = new HashMap<E, Object>();
@@ -72,4 +72,35 @@ public class AmigoSet<E> extends AbstractSet<E> implements Serializable, Cloneab
 
         return amigoSet;
     }
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
+        stream.writeObject(map.size());
+        for (E e : map.keySet()) {
+            stream.writeObject(e);
+        }
+
+        stream.writeObject(HashMapReflectionHelper.callHiddenMethod(map, "capacity"));
+        stream.writeObject(HashMapReflectionHelper.callHiddenMethod(map,"loadFactor"));
+
+    }
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+
+            stream.defaultReadObject();
+            int size = (int) stream.readObject();
+          Set<E> set = new HashSet<>();
+           for (int i = 0; i < size; i++)
+           {
+              set.add((E) stream.readObject());
+           }
+        int capacity  = (int) stream.readObject();
+        float loadFactor = (float) stream.readObject();
+        map = new HashMap<>(capacity,loadFactor);
+        for (E e : set) {
+              map.put(e,PRESENT);
+        }
+
+
+    }
+
+
 }

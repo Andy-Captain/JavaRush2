@@ -56,38 +56,42 @@ public class Solution {
                 }
             };
             String className = classFile.substring(0, classFile.length() - 6);
-            try {
-                Class clazz = loader.loadClass(className);
 
-                Class[] interfaces = clazz.getInterfaces();
-
-                for (Class anInterface : interfaces) {
-
-                    if (anInterface.getSimpleName().equals("HiddenClass")) {
+                   Class clazz = loader.loadClass(className);
+                    if (HiddenClass.class.isAssignableFrom(clazz)) {
                         hiddenClasses.add(clazz);
                     }
-                }
 
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
 
-            }
+
         }
     }
 
     public HiddenClass getHiddenClassObjectByKey(String key) {
-        for (Class clazz : hiddenClasses) {
-            if (clazz.getSimpleName().toLowerCase().startsWith(key.toLowerCase())) {
-                try {
-                    Constructor[] constructors = clazz.getDeclaredConstructors();
-                    constructors[0].setAccessible(true);
-                    return (HiddenClass) constructors[0].newInstance(null);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-
+        for(Class clazz: hiddenClasses){
+                    if(clazz.getSimpleName().toLowerCase().startsWith(key.toLowerCase())){
+                        try {
+                            Constructor[] constructors = clazz.getDeclaredConstructors();
+                            for(Constructor constructor: constructors){
+                                if(constructor.getParameterTypes().length==0){
+                                    constructor.setAccessible(true);
+                                    return (HiddenClass) constructor.newInstance(null);
+                                }
+                            }
+                        }
+                        catch (InstantiationException e) {
+                            e.printStackTrace();
+                        }
+                        catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                        catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            }
-        }
-        return null;
+                return null;
+
     }
 
     public static byte[] getBytesFrFile(String path) throws IOException {

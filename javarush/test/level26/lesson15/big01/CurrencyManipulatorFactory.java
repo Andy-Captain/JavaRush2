@@ -1,20 +1,15 @@
 package com.javarush.test.level26.lesson15.big01;
 
 
-
 import java.util.HashMap;
+import java.util.Map;
 
 
+public abstract class CurrencyManipulatorFactory {
 
-/**
- * Created by Dmitriy on 24.06.2015.
- */
-public final class CurrencyManipulatorFactory {
+    public static Map<String,CurrencyManipulator> manipulatorMap = new HashMap<>();
 
-    static HashMap<String,CurrencyManipulator> manipulatorMap = new HashMap<>();
 
-    private CurrencyManipulatorFactory() {
-    }
 
     public static CurrencyManipulator getManipulatorByCurrencyCode(String currencyCode)
     {

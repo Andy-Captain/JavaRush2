@@ -7,14 +7,15 @@ import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationExce
 import com.javarush.test.level26.lesson15.big01.exception.NotEnoughMoneyException;
 
 class WithdrawCommand implements Command {
+
     @Override
     public void execute() throws InterruptOperationException {
 
-
+        ConsoleHelper.writeMessage("Enter currency code");
         String currencyCode = ConsoleHelper.askCurrencyCode();
         CurrencyManipulator manipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(currencyCode);
         while(true) {
-            ConsoleHelper.writeMessage("Enter the summ");
+            ConsoleHelper.writeMessage(("before"));
             String summ = ConsoleHelper.readString();
             int enteredSumm;
              try {
@@ -22,29 +23,30 @@ class WithdrawCommand implements Command {
 
              } catch (NumberFormatException e)
              {
-                 ConsoleHelper.writeMessage("Incorrect data please Enter the summ");
+                 ConsoleHelper.writeMessage(("specify.amount"));
                  continue;
              }
             if (!manipulator.isAmountAvailable(enteredSumm))
             {
-                ConsoleHelper.writeMessage("Not enough money");
+                ConsoleHelper.writeMessage(("not.enough.money"));
                 continue;
             }
 
             if (enteredSumm <= 0)
             {
-                ConsoleHelper.writeMessage("Incorrect data please Enter the summ");
+                ConsoleHelper.writeMessage(("specify.not.empty.amount"));
+
                 continue;
             }
 
             try {
                 manipulator.withdrawAmount(enteredSumm);
             } catch (NotEnoughMoneyException e) {
-                ConsoleHelper.writeMessage("Incorrect data please Enter the summ");
+                ConsoleHelper.writeMessage(("exact.amount.not.available"));
                  continue;
             }
 
-
+            ConsoleHelper.writeMessage(String.format(("success.format"), enteredSumm, currencyCode));
             break;
 
 

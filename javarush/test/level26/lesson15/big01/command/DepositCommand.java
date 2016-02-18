@@ -5,7 +5,7 @@ import com.javarush.test.level26.lesson15.big01.CurrencyManipulator;
 import com.javarush.test.level26.lesson15.big01.CurrencyManipulatorFactory;
 import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
 
-import java.io.IOException;
+
 
 class DepositCommand implements Command {
     @Override

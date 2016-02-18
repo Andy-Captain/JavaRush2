@@ -2,6 +2,7 @@ package com.javarush.test.level26.lesson15.big01.command;
 
 import com.javarush.test.level26.lesson15.big01.Operation;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class CommandExecutor {
     private CommandExecutor() {
     }
 
-    public static final void execute(Operation operation) {
+    public static final void execute(Operation operation) throws IOException {
 
         map.get(operation).execute();
 

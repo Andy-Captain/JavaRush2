@@ -1,13 +1,14 @@
 package com.javarush.test.level26.lesson15.big01;
 
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public abstract class CurrencyManipulatorFactory {
 
-    public static Map<String,CurrencyManipulator> manipulatorMap = new HashMap<>();
+     static Map<String,CurrencyManipulator> manipulatorMap = new HashMap<>();
 
 
 
@@ -24,5 +25,9 @@ public abstract class CurrencyManipulatorFactory {
             return manipulatorMap.get(currencyCode);
         }
 
+    }
+    public static Collection<CurrencyManipulator> getAllCurrencyManipulators(){
+
+       return manipulatorMap.values();
     }
 }

@@ -1,5 +1,7 @@
 package com.javarush.test.level26.lesson15.big01;
 
+import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,11 +13,13 @@ public class ConsoleHelper {
         System.out.println(message);
     }
 
-    public static String readString() {
+    public static String readString() throws InterruptOperationException {
 
         String word = null;
         try {
             word = reader.readLine();
+            if (word.toLowerCase().equalsIgnoreCase(Operation.EXIT.toString().toLowerCase()))
+                            throw new InterruptOperationException();
         } catch (IOException e) {
 
         }
@@ -23,7 +27,7 @@ public class ConsoleHelper {
         return word;
     }
 
-    public static String askCurrencyCode() throws IOException {
+    public static String askCurrencyCode() throws  InterruptOperationException {
 
         String codeValut = "";
         writeMessage("Enter the currency code(3 symbols): ");
@@ -39,7 +43,7 @@ public class ConsoleHelper {
         return codeValut;
     }
 
-    public static String[] getValidTwoDigits(String currencyCode) throws IOException {
+    public static String[] getValidTwoDigits(String currencyCode) throws  InterruptOperationException {
 
         String[] arrayTwoDigital;
         writeMessage("Input denomination and count, please:");
@@ -70,7 +74,7 @@ public class ConsoleHelper {
         return arrayTwoDigital;
     }
 
-    public static Operation askOperation() {
+    public static Operation askOperation() throws InterruptOperationException {
 
         writeMessage("Enter the operation: 1 -INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT; ");
         while (true) {

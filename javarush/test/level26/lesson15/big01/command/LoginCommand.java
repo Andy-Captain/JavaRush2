@@ -3,10 +3,12 @@ package com.javarush.test.level26.lesson15.big01.command;
 import com.javarush.test.level26.lesson15.big01.ConsoleHelper;
 import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
 
+import java.util.ResourceBundle;
+
 public class LoginCommand implements Command {
 
-    private String cardNumber = "123456789012";
-    private String pin = "1234";
+    private ResourceBundle validCreditCards = ResourceBundle.getBundle("com.javarush.test.level26.lesson15.big01.resources.verifiedCards");
+
 
     @Override
     public void execute() throws InterruptOperationException {
@@ -20,8 +22,8 @@ public class LoginCommand implements Command {
             pn = ConsoleHelper.readString();
 
 
-            if (cardNumber.equals(num)) {
-                if (pin.equals(pn)) {
+            if (validCreditCards.containsKey(num)) {
+                if (validCreditCards.getString(num).equals(pn)) {
                     ConsoleHelper.writeMessage("Verification successful");
                     break;
                 }

@@ -11,13 +11,19 @@ public class CashMachine {
 
        try {
 
+
+
            Operation op = null;
+           CommandExecutor.execute(Operation.LOGIN);
            do {
                op = ConsoleHelper.askOperation();
                CommandExecutor.execute(op);
 
            } while (!op.equals(Operation.EXIT));
-       }catch (InterruptOperationException e)
+
+
+       }
+       catch (InterruptOperationException e)
        {
 
            ConsoleHelper.writeMessage("By by....");

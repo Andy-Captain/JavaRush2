@@ -5,10 +5,11 @@ import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationExce
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ResourceBundle;
 
 public class ConsoleHelper {
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
+    private static ResourceBundle res = ResourceBundle.getBundle(CashMachine.RESOURCE_PATH + "common_en");
     public static void writeMessage(String message) {
         System.out.println(message);
     }
@@ -90,5 +91,8 @@ public class ConsoleHelper {
 
     }
 
+    public static void printExitMessage() {
 
+            ConsoleHelper.writeMessage(res.getString("the.end"));
+        }
 }

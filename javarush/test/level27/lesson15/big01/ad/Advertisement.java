@@ -7,7 +7,7 @@ public class Advertisement {
     private long initialAmount;
     private int hits;
     private int duration;
-    private long amountPerOneDisplaying;
+    private long amountPerOneDisplaying ;
 
     public Advertisement(Object content, String name, long initialAmount, int hits, int duration) {
         this.content = content;
@@ -15,9 +15,9 @@ public class Advertisement {
         this.initialAmount = initialAmount;
         this.hits = hits;
         this.duration = duration;
-        if (hits == 0)
-            this.amountPerOneDisplaying = 0;
-                else
+
+
+
             this.amountPerOneDisplaying = initialAmount / hits;
     }
 
@@ -37,8 +37,8 @@ public class Advertisement {
     public void revalidate() throws UnsupportedOperationException{
         if (hits <= 0)
             throw new UnsupportedOperationException();
-
-        if(hits ==1)amountPerOneDisplaying += initialAmount % amountPerOneDisplaying;
         hits--;
     }
+
+
 }

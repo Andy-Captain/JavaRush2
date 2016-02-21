@@ -2,9 +2,6 @@ package com.javarush.test.level28.lesson15.big01;
 
 import com.javarush.test.level28.lesson15.big01.model.Model;
 
-/**
- * Created by Dmitriy on 12.01.2016.
- */
 public class Controller {
 
 

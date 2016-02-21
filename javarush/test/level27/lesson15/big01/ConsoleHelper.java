@@ -26,7 +26,7 @@ public class ConsoleHelper {
         writeMessage("Enter dish...(" + Dish.allDishesToString() + ")");
         while (true) {
             str = readString();
-            if ("exit".equals(str)) {
+            if (str.equalsIgnoreCase("exit")) {
                 break;
             }
 

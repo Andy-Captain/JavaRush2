@@ -20,12 +20,12 @@ public class Order {
         if ( dishes.isEmpty()) {
             return "";
         } else {
-            return "Your order: " + dishes + " of " + tablet;
+            return "Your order: " + dishes.toString() + " of " + tablet.toString();
         }
     }
 
     public boolean isEmpty() {
-           return dishes == null || dishes.isEmpty();
+           return  dishes.isEmpty();
        }
 
     public int getTotalCookingTime(){
@@ -35,5 +35,13 @@ public class Order {
 
         }
        return duration;
+    }
+
+    public List<Dish> getDishes() {
+        return dishes;
+    }
+
+    public Tablet getTablet() {
+        return tablet;
     }
 }

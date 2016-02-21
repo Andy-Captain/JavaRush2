@@ -6,9 +6,6 @@ import com.javarush.test.level28.lesson15.big01.vo.Vacancy;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Dmitriy on 13.01.2016.
- */
 public class Model {
     private View view;
     private Provider[] providers;

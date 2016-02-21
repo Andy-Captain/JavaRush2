@@ -9,77 +9,78 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by Dmitriy on 13.01.2016.
- */
 public class MoikrugStrategy implements Strategy{
 
-//    private static final String URL_FORMAT = "https://moikrug.ru/vacancies?q=java+%s";
+//     private static final String URL_FORMAT = "https://moikrug.ru/vacancies?q=java+%s&page=%d";
     private static final String URL_FORMAT = "http://javarush.ru/testdata/big28data2.html";
 
 
     @Override
     public List<Vacancy> getVacancies(String searchString) {
         List<Vacancy> vacancies = new ArrayList<>();
-                try {
-                    int pageNumber = 0;
-                    Document doc;
-                    while (true) {
-                        doc = getDocument(searchString, pageNumber++);
-                        if (doc == null) break;
+        int pageNumber = 1;
 
-                        Elements elements = doc.select("[class=job]");
-                        if (elements.size() == 0) break;
+        try {
 
-                        for (Element element : elements) {
-                            // title
-                            Element titleElement = element.select("[class=title]").first();
-                            String title = titleElement.text();
+            while (true) {
 
-                            // salary
-                            Element salaryElement = element.select("[class=count]").first();
-                            String salary = "";
-                            if (salaryElement != null) {
-                                salary = salaryElement.text();
-                            }
+                //Получаем документ для парсинга и увеличиваем счетчик страниц
+                Document doc = getDocument(searchString, pageNumber++);
+                //Если документа нет - выходим из цикла
+                if (doc == null) {
+                    break;
+                }
 
-                            // city
-                            String city = element.select("[class=location]").first().text();
+                //делаем выборку с указанными аттрибутами
+                Elements elements = doc.getElementsByClass("job");
+                //Если вакансий нет - выходим из цикла
+                if (elements.size() == 0) {
+                    break;
+                }
 
-                            // company
-                            String companyName = element.select("[class=company_name]").first().text();
+                //парсим
+                for (Element element : elements) {
+                    String siteName = "https://moikrug.ru";
 
-                            // site
-                            String siteName = "http://moikrug.ru";
+                    Vacancy vacancy = new Vacancy();
 
-                            // url
+                    Element titleE = element.getElementsByClass("title").first();
+                    if (titleE != null) {
+                        String title = titleE.select("a").first().text();
+                        String url = siteName + titleE.select("a").attr("href");
 
-                            String url = siteName+titleElement.select("a").attr("href");
-
-
-
-                            // add vacancy to the list
-                            Vacancy vacancy = new Vacancy();
-                            vacancy.setTitle(title);
-                            vacancy.setSalary(salary);
-                            vacancy.setCity(city);
-                            vacancy.setCompanyName(companyName);
-                            vacancy.setSiteName(siteName);
-                            vacancy.setUrl(url);
-                            vacancies.add(vacancy);
-
-
-                        }
-
-
+                        vacancy.setTitle(title);
+                        vacancy.setUrl(url);
                     }
-                }
-                catch (Exception e) {
 
-                }
+                    Element salaryE = element.getElementsByClass("count").first();
+                    if (salaryE != null) {
+                        String salary = salaryE.text();
 
-                return vacancies;
+                        vacancy.setSalary(salary);
+                    }
+
+                    Element cityE = element.getElementsByClass("location").first();
+                    if (cityE != null) {
+                        String city = cityE.text();
+
+                        vacancy.setCity(city);
+                    }
+
+                    Element companyE = element.getElementsByClass("company_name").first();
+                    if (companyE != null) {
+                        String companyName = companyE.select("a[href]").text();
+
+                        vacancy.setCompanyName(companyName);
+                    }
+                    vacancy.setSalary(siteName);
+                    vacancies.add(vacancy);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return vacancies;
     }
 
     protected Document getDocument(String searchString, int page) throws IOException {

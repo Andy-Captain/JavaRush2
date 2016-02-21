@@ -24,5 +24,8 @@ public class CookedOrderEventDataRow implements EventDataRow {
     }
 
 
-
+    @Override
+    public EventType getType() {
+        return EventType.COOKED_ORDER;
+    }
 }

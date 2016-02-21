@@ -11,6 +11,7 @@ import java.util.Map;
 public class StatisticManager {
     private static StatisticManager instance = new StatisticManager();
     private StatisticStorage statisticStorage = new StatisticStorage();
+
     private StatisticManager() {
     }
 
@@ -18,19 +19,28 @@ public class StatisticManager {
 
         return instance;
     }
-    public void register(EventDataRow data){
 
+    public void register(EventDataRow data) {
 
+        statisticStorage.put(data);
     }
 
 
     private class StatisticStorage {
-            private Map<EventType, List<EventDataRow>> map = new HashMap<>();
-            private StatisticStorage() {
-                for (EventType type : EventType.values()) {
-                    map.put(type, new ArrayList<EventDataRow>());
-                }
-            }
+        private Map<EventType, List<EventDataRow>> map = new HashMap<>();
 
+        private StatisticStorage() {
+            for (EventType type : EventType.values()) {
+                map.put(type, new ArrayList<EventDataRow>());
+            }
         }
+
+        private void put(EventDataRow data) {
+            map.get(data.getType()).add(data);
+        }
+
+        private List<EventDataRow> get(EventType eventType) {
+            return map.get(eventType);
+        }
+    }
 }

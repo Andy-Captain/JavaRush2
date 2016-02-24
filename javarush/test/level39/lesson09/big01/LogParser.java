@@ -44,7 +44,7 @@ public class LogParser implements IPQuery {
             for (Log log : logs) {
 
                 Date dateLog = log.getDate();
-                if (dateLog.before(before) && dateLog.after(after)) {
+                if (dateLog.before(before) && dateLog.after(after)|| dateLog.equals(before)|| dateLog.equals(after)) {
                     rezultUniqueIp.add(log.getIp());
                 }
             }
@@ -74,7 +74,7 @@ public class LogParser implements IPQuery {
             for (Log log : logs) {
 
                 Date dateLog = log.getDate();
-                if (dateLog.before(before) && dateLog.after(after)) {
+                if (dateLog.before(before) && dateLog.after(after)|| dateLog.equals(before)|| dateLog.equals(after)) {
                     allUniqueIp.add(log.getIp());
                 }
             }
@@ -104,7 +104,7 @@ public class LogParser implements IPQuery {
             for (Log log : logs) {
                 Date dateLog = log.getDate();
                 String name = log.getName().trim().toLowerCase();
-                if (dateLog.before(before) && dateLog.after(after)) {
+                if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before)|| dateLog.equals(after)) {
                     if (log.getName().equals(user)) {
                         allUniqueIpUser.add(log.getIp());
                     }
@@ -135,7 +135,7 @@ public class LogParser implements IPQuery {
             for (Log log : logs) {
 
                 Date dateLog = log.getDate();
-                if (dateLog.before(before) && dateLog.after(after)) {
+                if (dateLog.before(before) && dateLog.after(after)|| dateLog.equals(before)|| dateLog.equals(after)) {
                     if (log.getEvent().equals(event)) {
                         allUniqueIpEvent.add(log.getIp());
                     }
@@ -166,7 +166,7 @@ public class LogParser implements IPQuery {
             for (Log log : logs) {
 
                 Date dateLog = log.getDate();
-                if (dateLog.before(before) && dateLog.after(after)) {
+                if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before)|| dateLog.equals(after)) {
                     if (log.getStatus().equals(status)) {
                         allUniqueIpStatus.add(log.getIp());
                     }
@@ -241,7 +241,6 @@ public class LogParser implements IPQuery {
             }
             try {
                 date = format.parse(builderDate.toString());
-
             } catch (ParseException e) {
                 e.printStackTrace();
             }

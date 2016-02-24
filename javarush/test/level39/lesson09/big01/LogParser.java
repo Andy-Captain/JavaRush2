@@ -27,7 +27,7 @@ public class LogParser implements IPQuery {
         List<String> allStringFromFile = getAllStringFromFile(logDir);
         List<Log> logs = convertToLog(allStringFromFile);
 
-        if (!logs.isEmpty()) {
+
             Collections.sort(logs, new Comparator<Log>() {
                 @Override
                 public int compare(Log o1, Log o2) {
@@ -48,7 +48,7 @@ public class LogParser implements IPQuery {
                     rezultUniqueIp.add(log.getIp());
                 }
             }
-        }
+
 
         return rezultUniqueIp.size();
     }
@@ -58,7 +58,7 @@ public class LogParser implements IPQuery {
         Set<String> allUniqueIp = new HashSet<>();
         List<String> allStringFromFile = getAllStringFromFile(logDir);
         List<Log> logs = convertToLog(allStringFromFile);
-        if (!logs.isEmpty()) {
+
             Collections.sort(logs, new Comparator<Log>() {
                 @Override
                 public int compare(Log o1, Log o2) {
@@ -78,19 +78,17 @@ public class LogParser implements IPQuery {
                     allUniqueIp.add(log.getIp());
                 }
             }
-        }
+
         return allUniqueIp;
     }
 
     @Override
     public Set<String> getIPsForUser(String user, Date after, Date before) {
-        if (user == null) {
-            user = "";
-        }
+
         Set<String> allUniqueIpUser = new HashSet<>();
         List<String> allStringFromFile = getAllStringFromFile(logDir);
         List<Log> logs = convertToLog(allStringFromFile);
-        if (!logs.isEmpty()) {
+
             Collections.sort(logs, new Comparator<Log>() {
                 @Override
                 public int compare(Log o1, Log o2) {
@@ -104,15 +102,15 @@ public class LogParser implements IPQuery {
                 before = logs.get(logs.size() - 1).getDate();
             }
             for (Log log : logs) {
-
                 Date dateLog = log.getDate();
+                String name = log.getName().trim().toLowerCase();
                 if (dateLog.before(before) && dateLog.after(after)) {
                     if (log.getName().equals(user)) {
                         allUniqueIpUser.add(log.getIp());
                     }
                 }
             }
-        }
+
         return allUniqueIpUser;
     }
 
@@ -121,7 +119,7 @@ public class LogParser implements IPQuery {
         Set<String> allUniqueIpEvent = new HashSet<>();
         List<String> allStringFromFile = getAllStringFromFile(logDir);
         List<Log> logs = convertToLog(allStringFromFile);
-        if (!logs.isEmpty()) {
+
             Collections.sort(logs, new Comparator<Log>() {
                 @Override
                 public int compare(Log o1, Log o2) {
@@ -143,7 +141,7 @@ public class LogParser implements IPQuery {
                     }
                 }
             }
-        }
+
         return allUniqueIpEvent;
     }
 
@@ -152,7 +150,7 @@ public class LogParser implements IPQuery {
         Set<String> allUniqueIpStatus = new HashSet<>();
         List<String> allStringFromFile = getAllStringFromFile(logDir);
         List<Log> logs = convertToLog(allStringFromFile);
-        if (!logs.isEmpty()) {
+
             Collections.sort(logs, new Comparator<Log>() {
                 @Override
                 public int compare(Log o1, Log o2) {
@@ -174,7 +172,7 @@ public class LogParser implements IPQuery {
                     }
                 }
             }
-        }
+
         return allUniqueIpStatus;
     }
 
@@ -218,20 +216,20 @@ public class LogParser implements IPQuery {
             Status status = null;
             int numTask = -1;
             for (int i = 0; i < split.length; i++) {
-                // System.out.println("sp ="+split[i]);
-                if (i == 0) {
-                    ip = split[i];            //ip
+
+                if (i == 0 && checkCorrectIp(split[i])) {
+                    ip = split[i];
                 }
                 if (i > 0 && i < 4 && hasStringAllLetter(split[i])) {
                     builderName.append(split[i] + " ");
                 }
-                if (i > 1 && i < 6 && checkStartDate(split[i])) {
+                if ( i > 1 && i < 6 && checkStartDate(split[i])) {
                     builderDate.append(split[i] + " ");
                 }
-                if (checkEndDate(split[i])) {
+                if (i > 1 && i < 6 && checkEndDate(split[i])) {
                     builderDate.append(split[i]);
                 }
-                if (i > 3 && checkEvent(split[i])) {
+                if ( i > 3 && checkEvent(split[i])) {
                     event = convertStringToEvent(split[i]);
                     if (event.equals(Event.DONE_TASK) || event.equals(Event.SOLVE_TASK)) {
                         numTask = Integer.parseInt(split[i + 1]);
@@ -318,6 +316,15 @@ public class LogParser implements IPQuery {
         return m.matches();
     }
 
+    public static boolean checkCorrectIp(String s){
+        Pattern p = Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+                Matcher m = p.matcher(s);
+                return m.matches();
+    }
+
     private String removeExtraSpace(String s) {
         return Pattern.compile("[\\s]+").matcher(s).replaceAll(" ").trim();
     }
@@ -379,6 +386,33 @@ public class LogParser implements IPQuery {
             return status;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Log log = (Log) o;
+
+            if (num != log.num) return false;
+            if (!date.equals(log.date)) return false;
+            if (event != log.event) return false;
+            if (!ip.equals(log.ip)) return false;
+            if (!name.equals(log.name)) return false;
+            if (status != log.status) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = ip.hashCode();
+            result = 31 * result + name.hashCode();
+            result = 31 * result + date.hashCode();
+            result = 31 * result + event.hashCode();
+            result = 31 * result + num;
+            result = 31 * result + status.hashCode();
+            return result;
+        }
 
         @Override
         public String toString() {

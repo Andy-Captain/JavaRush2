@@ -1,6 +1,7 @@
 package com.javarush.test.level39.lesson09.big01;
 
 import com.javarush.test.level39.lesson09.big01.query.IPQuery;
+import com.javarush.test.level39.lesson09.big01.query.UserQuery;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +14,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogParser implements IPQuery {
+public class LogParser implements IPQuery, UserQuery {
     private Path logDir;
 
     public LogParser(Path logDir) {
@@ -22,32 +23,292 @@ public class LogParser implements IPQuery {
 
 
     @Override
-    public int getNumberOfUniqueIPs(Date after, Date before) {
-        Set<String> rezultUniqueIp = new HashSet<>();
+    public Set<String> getAllUsers() {
+        Set<String> allUsers = new HashSet<>();
         List<String> allStringFromFile = getAllStringFromFile(logDir);
         List<Log> logs = convertToLog(allStringFromFile);
 
+        for (Log log : logs) {
+            allUsers.add(log.getName());
+        }
 
-            Collections.sort(logs, new Comparator<Log>() {
-                @Override
-                public int compare(Log o1, Log o2) {
-                    return o1.getDate().compareTo(o2.getDate());
+        return allUsers;
+    }
+
+    @Override
+    public int getNumberOfUsers(Date after, Date before) {
+        Set<String> allUsers = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                allUsers.add(log.getName());
+            }
+
+
+        }
+
+
+        return allUsers.size();
+    }
+
+    public List<Log> getListLogs() {
+        List<String> allStringFromFile = getAllStringFromFile(logDir);
+        List<Log> logs = convertToLog(allStringFromFile);
+        Collections.sort(logs, new Comparator<Log>() {
+            @Override
+            public int compare(Log o1, Log o2) {
+                return o1.getDate().compareTo(o2.getDate());
+            }
+        });
+        return logs;
+    }
+
+    @Override
+    public int getNumberOfUserEvents(String user, Date after, Date before) {
+        List<Event> listEvent = new ArrayList<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getName().equals(user)) {
+                    listEvent.add(log.getEvent());
                 }
-            });
-            if (after == null) {
-                after = logs.get(0).getDate();
             }
-            if (before == null) {
-                before = logs.get(logs.size() - 1).getDate();
-            }
+        }
 
-            for (Log log : logs) {
+        return listEvent.size();
+    }
 
-                Date dateLog = log.getDate();
-                if (dateLog.before(before) && dateLog.after(after)|| dateLog.equals(before)|| dateLog.equals(after)) {
-                    rezultUniqueIp.add(log.getIp());
+    @Override
+    public Set<String> getUsersForIP(String ip, Date after, Date before) {
+        Set<String> listUserByIp = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getIp().equals(ip)) {
+                    listUserByIp.add(log.getName());
                 }
             }
+        }
+
+        return listUserByIp;
+    }
+
+    @Override
+    public Set<String> getLoggedUsers(Date after, Date before) {
+        Set<String> listUserByLogin = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.LOGIN)) {
+                    listUserByLogin.add(log.getName());
+                }
+            }
+        }
+
+        return listUserByLogin;
+    }
+
+    @Override
+    public Set<String> getDownloadedPluginUsers(Date after, Date before) {
+        Set<String> listUserByLogin = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.DOWNLOAD_PLUGIN)) {
+                    listUserByLogin.add(log.getName());
+                }
+            }
+        }
+
+        return listUserByLogin;
+    }
+
+    @Override
+    public Set<String> getWroteMessageUsers(Date after, Date before) {
+        Set<String> listUserByWriteMessage = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.WRITE_MESSAGE)) {
+                    listUserByWriteMessage.add(log.getName());
+                }
+            }
+        }
+
+        return listUserByWriteMessage;
+    }
+
+    @Override
+    public Set<String> getSolvedTaskUsers(Date after, Date before) {
+        Set<String> listUserBySolveTask = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.SOLVE_TASK)) {
+                    listUserBySolveTask.add(log.getName());
+                }
+            }
+        }
+
+        return listUserBySolveTask;
+    }
+
+    @Override
+    public Set<String> getSolvedTaskUsers(Date after, Date before, int task) {
+        Set<String> listUserBySolveTaskNum = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.SOLVE_TASK) && log.getNum() == task) {
+                    listUserBySolveTaskNum.add(log.getName());
+                }
+            }
+        }
+
+        return listUserBySolveTaskNum;
+    }
+
+    @Override
+    public Set<String> getDoneTaskUsers(Date after, Date before) {
+        Set<String> listUserByDoneTask = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.DONE_TASK)) {
+                    listUserByDoneTask.add(log.getName());
+                }
+            }
+        }
+
+        return listUserByDoneTask;
+    }
+
+    @Override
+    public Set<String> getDoneTaskUsers(Date after, Date before, int task) {
+
+        Set<String> listUserBySolveTaskNum = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+
+                if (log.getEvent().equals(Event.DONE_TASK) && log.getNum() == task) {
+                    listUserBySolveTaskNum.add(log.getName());
+                }
+            }
+        }
+
+        return listUserBySolveTaskNum;
+    }
+
+
+    @Override
+    public int getNumberOfUniqueIPs(Date after, Date before) {
+        Set<String> rezultUniqueIp = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                rezultUniqueIp.add(log.getIp());
+            }
+        }
 
 
         return rezultUniqueIp.size();
@@ -56,28 +317,20 @@ public class LogParser implements IPQuery {
     @Override
     public Set<String> getUniqueIPs(Date after, Date before) {
         Set<String> allUniqueIp = new HashSet<>();
-        List<String> allStringFromFile = getAllStringFromFile(logDir);
-        List<Log> logs = convertToLog(allStringFromFile);
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+        for (Log log : logs) {
 
-            Collections.sort(logs, new Comparator<Log>() {
-                @Override
-                public int compare(Log o1, Log o2) {
-                    return o1.getDate().compareTo(o2.getDate());
-                }
-            });
-            if (after == null) {
-                after = logs.get(0).getDate();
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                allUniqueIp.add(log.getIp());
             }
-            if (before == null) {
-                before = logs.get(logs.size() - 1).getDate();
-            }
-            for (Log log : logs) {
-
-                Date dateLog = log.getDate();
-                if (dateLog.before(before) && dateLog.after(after)|| dateLog.equals(before)|| dateLog.equals(after)) {
-                    allUniqueIp.add(log.getIp());
-                }
-            }
+        }
 
         return allUniqueIp;
     }
@@ -86,30 +339,22 @@ public class LogParser implements IPQuery {
     public Set<String> getIPsForUser(String user, Date after, Date before) {
 
         Set<String> allUniqueIpUser = new HashSet<>();
-        List<String> allStringFromFile = getAllStringFromFile(logDir);
-        List<Log> logs = convertToLog(allStringFromFile);
-
-            Collections.sort(logs, new Comparator<Log>() {
-                @Override
-                public int compare(Log o1, Log o2) {
-                    return o1.getDate().compareTo(o2.getDate());
-                }
-            });
-            if (after == null) {
-                after = logs.get(0).getDate();
-            }
-            if (before == null) {
-                before = logs.get(logs.size() - 1).getDate();
-            }
-            for (Log log : logs) {
-                Date dateLog = log.getDate();
-                String name = log.getName().trim().toLowerCase();
-                if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before)|| dateLog.equals(after)) {
-                    if (log.getName().equals(user)) {
-                        allUniqueIpUser.add(log.getIp());
-                    }
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+        for (Log log : logs) {
+            Date dateLog = log.getDate();
+            String name = log.getName().trim().toLowerCase();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getName().equals(user)) {
+                    allUniqueIpUser.add(log.getIp());
                 }
             }
+        }
 
         return allUniqueIpUser;
     }
@@ -117,30 +362,22 @@ public class LogParser implements IPQuery {
     @Override
     public Set<String> getIPsForEvent(Event event, Date after, Date before) {
         Set<String> allUniqueIpEvent = new HashSet<>();
-        List<String> allStringFromFile = getAllStringFromFile(logDir);
-        List<Log> logs = convertToLog(allStringFromFile);
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+        for (Log log : logs) {
 
-            Collections.sort(logs, new Comparator<Log>() {
-                @Override
-                public int compare(Log o1, Log o2) {
-                    return o1.getDate().compareTo(o2.getDate());
-                }
-            });
-            if (after == null) {
-                after = logs.get(0).getDate();
-            }
-            if (before == null) {
-                before = logs.get(logs.size() - 1).getDate();
-            }
-            for (Log log : logs) {
-
-                Date dateLog = log.getDate();
-                if (dateLog.before(before) && dateLog.after(after)|| dateLog.equals(before)|| dateLog.equals(after)) {
-                    if (log.getEvent().equals(event)) {
-                        allUniqueIpEvent.add(log.getIp());
-                    }
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(event)) {
+                    allUniqueIpEvent.add(log.getIp());
                 }
             }
+        }
 
         return allUniqueIpEvent;
     }
@@ -148,30 +385,22 @@ public class LogParser implements IPQuery {
     @Override
     public Set<String> getIPsForStatus(Status status, Date after, Date before) {
         Set<String> allUniqueIpStatus = new HashSet<>();
-        List<String> allStringFromFile = getAllStringFromFile(logDir);
-        List<Log> logs = convertToLog(allStringFromFile);
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+        for (Log log : logs) {
 
-            Collections.sort(logs, new Comparator<Log>() {
-                @Override
-                public int compare(Log o1, Log o2) {
-                    return o1.getDate().compareTo(o2.getDate());
-                }
-            });
-            if (after == null) {
-                after = logs.get(0).getDate();
-            }
-            if (before == null) {
-                before = logs.get(logs.size() - 1).getDate();
-            }
-            for (Log log : logs) {
-
-                Date dateLog = log.getDate();
-                if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before)|| dateLog.equals(after)) {
-                    if (log.getStatus().equals(status)) {
-                        allUniqueIpStatus.add(log.getIp());
-                    }
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getStatus().equals(status)) {
+                    allUniqueIpStatus.add(log.getIp());
                 }
             }
+        }
 
         return allUniqueIpStatus;
     }
@@ -223,13 +452,13 @@ public class LogParser implements IPQuery {
                 if (i > 0 && i < 4 && hasStringAllLetter(split[i])) {
                     builderName.append(split[i] + " ");
                 }
-                if ( i > 1 && i < 6 && checkStartDate(split[i])) {
+                if (i > 1 && i < 6 && checkStartDate(split[i])) {
                     builderDate.append(split[i] + " ");
                 }
                 if (i > 1 && i < 6 && checkEndDate(split[i])) {
                     builderDate.append(split[i]);
                 }
-                if ( i > 3 && checkEvent(split[i])) {
+                if (i > 3 && checkEvent(split[i])) {
                     event = convertStringToEvent(split[i]);
                     if (event.equals(Event.DONE_TASK) || event.equals(Event.SOLVE_TASK)) {
                         numTask = Integer.parseInt(split[i + 1]);
@@ -315,13 +544,13 @@ public class LogParser implements IPQuery {
         return m.matches();
     }
 
-    public static boolean checkCorrectIp(String s){
+    private boolean checkCorrectIp(String s) {
         Pattern p = Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
                 "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
                 "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
                 "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
-                Matcher m = p.matcher(s);
-                return m.matches();
+        Matcher m = p.matcher(s);
+        return m.matches();
     }
 
     private String removeExtraSpace(String s) {
@@ -337,6 +566,7 @@ public class LogParser implements IPQuery {
         }
         return count == s.length();
     }
+
 
     private class Log {
         private String ip;

@@ -18,6 +18,6 @@ public class Solution
         String namber=reader.readLine();
         int nmb=Integer.parseInt(namber);
 
-    System.out.print("Я буду зарабатывать $"+nmb+"  в час");
+    System.out.print("Я буду зарабатывать $" + nmb + "  в час");
     }
 }

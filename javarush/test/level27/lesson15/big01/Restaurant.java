@@ -15,5 +15,12 @@ public class Restaurant {
         Tablet tablet = new Tablet(5);
         tablet.addObserver(cook);
         tablet.createOrder();
+        DirectorTablet directorTablet = new DirectorTablet();
+
+        directorTablet.printAdvertisementProfit();
+        directorTablet.printCookWorkloading();
+        directorTablet.printActiveVideoSet();
+        directorTablet.printArchivedVideoSet();
+
     }
 }

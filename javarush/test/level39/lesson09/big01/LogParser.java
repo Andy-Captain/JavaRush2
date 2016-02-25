@@ -1,6 +1,7 @@
 package com.javarush.test.level39.lesson09.big01;
 
 import com.javarush.test.level39.lesson09.big01.query.DateQuery;
+import com.javarush.test.level39.lesson09.big01.query.EventQuery;
 import com.javarush.test.level39.lesson09.big01.query.IPQuery;
 import com.javarush.test.level39.lesson09.big01.query.UserQuery;
 
@@ -15,7 +16,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogParser implements IPQuery, UserQuery, DateQuery {
+public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
     private Path logDir;
 
     public LogParser(Path logDir) {
@@ -765,6 +766,260 @@ public class LogParser implements IPQuery, UserQuery, DateQuery {
         }
 
         return listDateByPlagin;
+    }
+
+    @Override
+    public int getNumberOfAllEvents(Date after, Date before) {
+        Set<Event> listEventByDate = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent() != null) {
+                    listEventByDate.add(log.getEvent());
+                }
+            }
+        }
+
+        return listEventByDate.size();
+    }
+
+    @Override
+    public Set<Event> getAllEvents(Date after, Date before) {
+        Set<Event> listEventByDate = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent() != null) {
+                    listEventByDate.add(log.getEvent());
+                }
+            }
+        }
+
+        return listEventByDate;
+    }
+
+    @Override
+    public Set<Event> getEventsForIP(String ip, Date after, Date before) {
+        Set<Event> listEventByDate = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getIp().equals(ip)) {
+                    listEventByDate.add(log.getEvent());
+                }
+            }
+        }
+
+        return listEventByDate;
+    }
+
+    @Override
+    public Set<Event> getEventsForUser(String user, Date after, Date before) {
+        Set<Event> listEventByUser = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getName().equals(user)) {
+                    listEventByUser.add(log.getEvent());
+                }
+            }
+        }
+
+        return listEventByUser;
+    }
+
+    @Override
+    public Set<Event> getFailedEvents(Date after, Date before) {
+        Set<Event> listEventByFiled = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getStatus().equals(Status.FAILED)) {
+                    listEventByFiled.add(log.getEvent());
+                }
+            }
+        }
+
+        return listEventByFiled;
+    }
+
+    @Override
+    public Set<Event> getErrorEvents(Date after, Date before) {
+        Set<Event> listStatusByError = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getStatus().equals(Status.ERROR)) {
+                    listStatusByError.add(log.getEvent());
+                }
+            }
+        }
+
+        return listStatusByError;
+    }
+
+    @Override
+    public int getNumberOfAttemptToSolveTask(int task, Date after, Date before) {
+        int count = 0;
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.SOLVE_TASK) && log.getNum() == task) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    @Override
+    public int getNumberOfSuccessfulAttemptToSolveTask(int task, Date after, Date before) {
+
+        int count = 0;
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.DONE_TASK) && log.getNum() == task) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    @Override
+    public Map<Integer, Integer> getAllSolvedTasksAndTheirNumber(Date after, Date before) {
+
+        Map<Integer, Integer> mapSolvedTask = new HashMap<>();
+        int count = 0;
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.SOLVE_TASK)) {
+
+                    if (!mapSolvedTask.containsKey(log.getNum())) {
+                        mapSolvedTask.put(log.getNum(), 1);
+                    } else {
+                        mapSolvedTask.put(log.getNum(), mapSolvedTask.get(log.getNum()) + 1);
+                    }
+                }
+            }
+        }
+
+        return mapSolvedTask;
+    }
+
+    @Override
+    public Map<Integer, Integer> getAllDoneTasksAndTheirNumber(Date after, Date before) {
+        Map<Integer, Integer> mapDoneTask = new HashMap<>();
+        int count = 0;
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getEvent().equals(Event.DONE_TASK)) {
+
+                    if (!mapDoneTask.containsKey(log.getNum())) {
+                        mapDoneTask.put(log.getNum(), 1);
+                    } else {
+                        mapDoneTask.put(log.getNum(), mapDoneTask.get(log.getNum()) + 1);
+                    }
+                }
+            }
+        }
+
+        return mapDoneTask;
     }
 
 

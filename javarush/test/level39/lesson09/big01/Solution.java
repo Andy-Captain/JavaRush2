@@ -30,7 +30,7 @@ public class Solution {
 //        System.out.println(logParser.getDateWhenUserDoneTask("Vasya Pupkin",15,null,null));
 //        System.out.println(logParser.getDatesWhenUserWroteMessage("Eduard Petrovich Morozko",null,null));
 //        System.out.println(logParser.getDatesWhenUserDownloadedPlugin("Eduard Petrovich Morozko",null,null));
-        System.out.println(logParser.getNumberOfAllEvents(null,null));
+//        System.out.println(logParser.getNumberOfAllEvents(null,null));
 //        System.out.println(logParser.getAllEvents(null,null));
 //        System.out.println(logParser.getEventsForIP("192.168.100.2",null,null));
 //        System.out.println(logParser.getEventsForUser("Eduard Petrovich Morozko",null,null));
@@ -40,6 +40,13 @@ public class Solution {
 //        System.out.println(logParser.getNumberOfSuccessfulAttemptToSolveTask(15,null,null));
 //        System.out.println(logParser.getAllSolvedTasksAndTheirNumber(null,null));
 //        System.out.println(logParser.getAllDoneTasksAndTheirNumber(null,null));
+        //////////////////////////
+        System.out.println(logParser.execute("get ip"));
+        System.out.println(logParser.execute("get user"));
+        System.out.println(logParser.execute("get date"));
+        System.out.println(logParser.execute("get event"));
+        System.out.println(logParser.execute("get status"));
+
 
     }
 }

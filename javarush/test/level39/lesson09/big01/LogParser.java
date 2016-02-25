@@ -1,9 +1,6 @@
 package com.javarush.test.level39.lesson09.big01;
 
-import com.javarush.test.level39.lesson09.big01.query.DateQuery;
-import com.javarush.test.level39.lesson09.big01.query.EventQuery;
-import com.javarush.test.level39.lesson09.big01.query.IPQuery;
-import com.javarush.test.level39.lesson09.big01.query.UserQuery;
+import com.javarush.test.level39.lesson09.big01.query.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +13,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
+public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQuery {
     private Path logDir;
 
     public LogParser(Path logDir) {
@@ -1020,6 +1017,41 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery {
         }
 
         return mapDoneTask;
+    }
+
+    @Override
+    public Set<Object> execute(String query) {
+        Set<Object> rezultSet = rezultSet = new HashSet<>();
+        List<Log> logs = getListLogs();
+
+        switch (query) {
+            case "get ip":
+                for (Log log : logs) {
+                    rezultSet.add(log.getIp());
+                }
+                break;
+            case "get user":
+                for (Log log : logs) {
+                    rezultSet.add(log.getName());
+                }
+                break;
+            case "get date":
+                for (Log log : logs) {
+                    rezultSet.add(log.getDate());
+                }
+                break;
+            case "get event":
+                for (Log log : logs) {
+                    rezultSet.add(log.getEvent());
+                }
+                break;
+            case "get status":
+                for (Log log : logs) {
+                    rezultSet.add(log.getStatus());
+                }
+                break;
+        }
+        return rezultSet;
     }
 
 

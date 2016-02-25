@@ -1,5 +1,6 @@
 package com.javarush.test.level39.lesson09.big01;
 
+import com.javarush.test.level39.lesson09.big01.query.DateQuery;
 import com.javarush.test.level39.lesson09.big01.query.IPQuery;
 import com.javarush.test.level39.lesson09.big01.query.UserQuery;
 
@@ -14,7 +15,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogParser implements IPQuery, UserQuery {
+public class LogParser implements IPQuery, UserQuery, DateQuery {
     private Path logDir;
 
     public LogParser(Path logDir) {
@@ -565,6 +566,205 @@ public class LogParser implements IPQuery, UserQuery {
             }
         }
         return count == s.length();
+    }
+
+    @Override
+    public Set<Date> getDatesForUserAndEvent(String user, Event event, Date after, Date before) {
+        Set<Date> listDateByEvent = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getName().equals(user) && log.getEvent().equals(event)) {
+                    listDateByEvent.add(log.getDate());
+                }
+            }
+        }
+
+        return listDateByEvent;
+    }
+
+    @Override
+    public Set<Date> getDatesWhenSomethingFailed(Date after, Date before) {
+        Set<Date> listDateByEvent = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getStatus().equals(Status.FAILED)) {
+                    listDateByEvent.add(log.getDate());
+                }
+            }
+        }
+
+        return listDateByEvent;
+    }
+
+    @Override
+    public Set<Date> getDatesWhenErrorHappened(Date after, Date before) {
+        Set<Date> listDateByStatus = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (log.getStatus().equals(Status.ERROR)) {
+                    listDateByStatus.add(log.getDate());
+                }
+            }
+        }
+
+        return listDateByStatus;
+
+    }
+
+    @Override
+    public Date getDateWhenUserLoggedFirstTime(String user, Date after, Date before) {
+        Date firstLogin = null;
+        List<Log> logs = getListLogs();
+        int count = 0;
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (user.equals(log.getName()) && log.getEvent().equals(Event.LOGIN) && count == 0) {
+                    firstLogin = log.getDate();
+                    count++;
+                }
+            }
+        }
+
+        return firstLogin;
+    }
+
+    @Override
+    public Date getDateWhenUserSolvedTask(String user, int task, Date after, Date before) {
+        Date firstSolved = null;
+        List<Log> logs = getListLogs();
+        int count = 0;
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (user.equals(log.getName()) && log.getEvent().equals(Event.SOLVE_TASK) && log.getNum() == task && count == 0) {
+                    firstSolved = log.getDate();
+                    count++;
+                }
+            }
+        }
+
+        return firstSolved;
+    }
+
+    @Override
+    public Date getDateWhenUserDoneTask(String user, int task, Date after, Date before) {
+        Date firstDoneTask = null;
+        List<Log> logs = getListLogs();
+        int count = 0;
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (user.equals(log.getName()) && log.getEvent().equals(Event.DONE_TASK) && log.getNum() == task && count == 0) {
+                    firstDoneTask = log.getDate();
+                    count++;
+                }
+            }
+        }
+
+        return firstDoneTask;
+    }
+
+    @Override
+    public Set<Date> getDatesWhenUserWroteMessage(String user, Date after, Date before) {
+        Set<Date> listDateByStatus = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (user.equals(log.getName()) && log.getEvent().equals(Event.WRITE_MESSAGE)) {
+                    listDateByStatus.add(log.getDate());
+                }
+            }
+        }
+
+        return listDateByStatus;
+    }
+
+    @Override
+    public Set<Date> getDatesWhenUserDownloadedPlugin(String user, Date after, Date before) {
+        Set<Date> listDateByPlagin = new HashSet<>();
+        List<Log> logs = getListLogs();
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+        for (Log log : logs) {
+
+            Date dateLog = log.getDate();
+            if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after)) {
+                if (user.equals(log.getName()) && log.getEvent().equals(Event.DOWNLOAD_PLUGIN)) {
+                    listDateByPlagin.add(log.getDate());
+                }
+            }
+        }
+
+        return listDateByPlagin;
     }
 
 

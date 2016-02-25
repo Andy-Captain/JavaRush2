@@ -1019,35 +1019,218 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
         return mapDoneTask;
     }
 
+
     @Override
     public Set<Object> execute(String query) {
-        Set<Object> rezultSet = rezultSet = new HashSet<>();
+        Set<Object> rezultSet = new HashSet<>();
         List<Log> logs = getListLogs();
+        String[] split = query.split("=");
 
-        switch (query) {
-            case "get ip":
-                for (Log log : logs) {
-                    rezultSet.add(log.getIp());
+        String[] split1 = split[0].trim().split(" ");
+        String strGet = split1[1].trim();
+        String strFor = split1[3].trim();
+
+
+        String dataQuery = split[1].trim().replaceAll("\"", "");
+
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        switch (strGet) {
+            case "ip":
+                if (strFor.equals("user")) {
+                    for (Log log : logs) {
+                        if (log.getName().equals(dataQuery)) {
+                            rezultSet.add(log.getIp());
+                        }
+
+                    }
                 }
-                break;
-            case "get user":
-                for (Log log : logs) {
-                    rezultSet.add(log.getName());
+                if (strFor.equals("date")) {
+                    Date parse = null;
+                    try {
+                        parse = format.parse(dataQuery);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    for (Log log : logs) {
+                        if (log.getDate().equals(parse)) {
+                            rezultSet.add(log.getIp());
+                        }
+                    }
                 }
-                break;
-            case "get date":
-                for (Log log : logs) {
-                    rezultSet.add(log.getDate());
+                if (strFor.equals("event")) {
+                    for (Log log : logs) {
+
+                        if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
+                            rezultSet.add(log.getIp());
+                        }
+                    }
                 }
-                break;
-            case "get event":
-                for (Log log : logs) {
-                    rezultSet.add(log.getEvent());
+                if (strFor.equals("status")) {
+                    for (Log log : logs) {
+
+                        if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
+                            rezultSet.add(log.getIp());
+                        }
+                    }
                 }
+
                 break;
-            case "get status":
-                for (Log log : logs) {
-                    rezultSet.add(log.getStatus());
+            case "user":
+                if (strFor.equals("ip")) {
+                    for (Log log : logs) {
+
+                        if (log.getIp().equals(dataQuery)) {
+                            rezultSet.add(log.getName());
+                        }
+                    }
+                }
+                if (strFor.equals("date")) {
+                    Date parse = null;
+                    try {
+                        parse = format.parse(dataQuery);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    for (Log log : logs) {
+
+                        if (log.getDate().equals(parse)) {
+                            rezultSet.add(log.getName());
+                        }
+                    }
+                }
+                if (strFor.equals("event")) {
+                    for (Log log : logs) {
+
+                        if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
+                            rezultSet.add(log.getName());
+                        }
+                    }
+                }
+                if (strFor.equals("status")) {
+                    for (Log log : logs) {
+
+                        if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
+                            rezultSet.add(log.getName());
+                        }
+                    }
+                }
+
+                break;
+            case "date":
+                if (strFor.equals("ip")) {
+                    for (Log log : logs) {
+
+                        if (log.getIp().equals(dataQuery)) {
+                            rezultSet.add(log.getDate());
+                        }
+                    }
+                }
+                if (strFor.equals("user")) {
+                    for (Log log : logs) {
+
+                        if (log.getName().equals(dataQuery)) {
+                            rezultSet.add(log.getDate());
+                        }
+                    }
+                }
+                if (strFor.equals("event")) {
+                    for (Log log : logs) {
+
+                        if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
+                            rezultSet.add(log.getDate());
+                        }
+                    }
+                }
+                if (strFor.equals("status")) {
+                    for (Log log : logs) {
+
+                        if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
+                            rezultSet.add(log.getDate());
+                        }
+                    }
+                }
+
+
+                break;
+            case "event":
+                if (strFor.equals("ip")) {
+                    for (Log log : logs) {
+
+                        if (log.getIp().equals(dataQuery)) {
+                            rezultSet.add(log.getEvent());
+                        }
+                    }
+                }
+                if (strFor.equals("user")) {
+                    for (Log log : logs) {
+
+                        if (log.getName().equals(dataQuery)) {
+                            rezultSet.add(log.getEvent());
+                        }
+                    }
+                }
+                if (strFor.equals("date")) {
+                    Date parse = null;
+                    try {
+                        parse = format.parse(dataQuery);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    for (Log log : logs) {
+
+                        if (log.getDate().equals(parse)) {
+                            rezultSet.add(log.getEvent());
+                        }
+                    }
+                }
+                if (strFor.equals("status")) {
+                    for (Log log : logs) {
+
+                        if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
+                            rezultSet.add(log.getEvent());
+                        }
+                    }
+                }
+
+                break;
+            case "status":
+                if (strFor.equals("ip")) {
+                    for (Log log : logs) {
+
+                        if (log.getIp().equals(dataQuery)) {
+                            rezultSet.add(log.getStatus());
+                        }
+                    }
+                }
+                if (strFor.equals("user")) {
+                    for (Log log : logs) {
+
+                        if (log.getName().equals(dataQuery)) {
+                            rezultSet.add(log.getStatus());
+                        }
+                    }
+                }
+                if (strFor.equals("date")) {
+                    Date parse = null;
+                    try {
+                        parse = format.parse(dataQuery);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    for (Log log : logs) {
+
+                        if (log.getDate().equals(parse)) {
+                            rezultSet.add(log.getStatus());
+                        }
+                    }
+                }
+                if (strFor.equals("event")) {
+                    for (Log log : logs) {
+
+                        if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
+                            rezultSet.add(log.getStatus());
+                        }
+                    }
                 }
                 break;
         }

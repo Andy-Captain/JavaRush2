@@ -1024,23 +1024,49 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
     public Set<Object> execute(String query) {
         Set<Object> rezultSet = new HashSet<>();
         List<Log> logs = getListLogs();
-        String[] split = query.split("=");
-
-        String[] split1 = split[0].trim().split(" ");
-        String strGet = split1[1].trim();
-        String strFor = split1[3].trim();
-
-
-        String dataQuery = split[1].trim().replaceAll("\"", "");
-
+        String[] split = query.split("=");    //split[0] get ip for user  split[1] "Eduard Petrovich Morozko"
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        String[] splitGetFor = split[0].trim().split(" ");
+        String strGet = splitGetFor[1].trim();
+        String strFor = splitGetFor[3].trim();
+        // get ip for user = "Eduard Petrovich Morozko" and date between "11.12.2013 0:00:00" and "03.01.2014 23:59:59"
+        String dataQuery = "";
+        Date after = null;
+        Date before = null;
+        if (!split[1].contains("date")) {
+            dataQuery = split[1].trim().replaceAll("\"", "");
+        } else {
+
+            String[] splitDataAndDate = split[1].split("\"");
+
+            dataQuery = splitDataAndDate[1];
+
+            try {
+                after = format.parse(splitDataAndDate[3].trim());
+                before = format.parse(splitDataAndDate[5].trim());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        if (after == null) {
+            after = logs.get(0).getDate();
+        }
+        if (before == null) {
+            before = logs.get(logs.size() - 1).getDate();
+        }
+
+
         switch (strGet) {
             case "ip":
                 if (strFor.equals("user")) {
                     for (Log log : logs) {
-                        if (log.getName().equals(dataQuery)) {
-                            rezultSet.add(log.getIp());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getName().equals(dataQuery)) {
+                                rezultSet.add(log.getIp());
+                            }
 
                     }
                 }
@@ -1052,25 +1078,29 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                         e.printStackTrace();
                     }
                     for (Log log : logs) {
-                        if (log.getDate().equals(parse)) {
-                            rezultSet.add(log.getIp());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getDate().equals(parse)) {
+                                rezultSet.add(log.getIp());
+                            }
                     }
                 }
                 if (strFor.equals("event")) {
                     for (Log log : logs) {
-
-                        if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
-                            rezultSet.add(log.getIp());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
+                                rezultSet.add(log.getIp());
+                            }
                     }
                 }
                 if (strFor.equals("status")) {
                     for (Log log : logs) {
-
-                        if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
-                            rezultSet.add(log.getIp());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
+                                rezultSet.add(log.getIp());
+                            }
                     }
                 }
 
@@ -1078,10 +1108,11 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
             case "user":
                 if (strFor.equals("ip")) {
                     for (Log log : logs) {
-
-                        if (log.getIp().equals(dataQuery)) {
-                            rezultSet.add(log.getName());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getIp().equals(dataQuery)) {
+                                rezultSet.add(log.getName());
+                            }
                     }
                 }
                 if (strFor.equals("date")) {
@@ -1092,26 +1123,29 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                         e.printStackTrace();
                     }
                     for (Log log : logs) {
-
-                        if (log.getDate().equals(parse)) {
-                            rezultSet.add(log.getName());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getDate().equals(parse)) {
+                                rezultSet.add(log.getName());
+                            }
                     }
                 }
                 if (strFor.equals("event")) {
                     for (Log log : logs) {
-
-                        if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
-                            rezultSet.add(log.getName());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
+                                rezultSet.add(log.getName());
+                            }
                     }
                 }
                 if (strFor.equals("status")) {
                     for (Log log : logs) {
-
-                        if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
-                            rezultSet.add(log.getName());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
+                                rezultSet.add(log.getName());
+                            }
                     }
                 }
 
@@ -1119,34 +1153,38 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
             case "date":
                 if (strFor.equals("ip")) {
                     for (Log log : logs) {
-
-                        if (log.getIp().equals(dataQuery)) {
-                            rezultSet.add(log.getDate());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getIp().equals(dataQuery)) {
+                                rezultSet.add(log.getDate());
+                            }
                     }
                 }
                 if (strFor.equals("user")) {
                     for (Log log : logs) {
-
-                        if (log.getName().equals(dataQuery)) {
-                            rezultSet.add(log.getDate());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getName().equals(dataQuery)) {
+                                rezultSet.add(log.getDate());
+                            }
                     }
                 }
                 if (strFor.equals("event")) {
                     for (Log log : logs) {
-
-                        if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
-                            rezultSet.add(log.getDate());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
+                                rezultSet.add(log.getDate());
+                            }
                     }
                 }
                 if (strFor.equals("status")) {
                     for (Log log : logs) {
-
-                        if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
-                            rezultSet.add(log.getDate());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
+                                rezultSet.add(log.getDate());
+                            }
                     }
                 }
 
@@ -1155,18 +1193,20 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
             case "event":
                 if (strFor.equals("ip")) {
                     for (Log log : logs) {
-
-                        if (log.getIp().equals(dataQuery)) {
-                            rezultSet.add(log.getEvent());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getIp().equals(dataQuery)) {
+                                rezultSet.add(log.getEvent());
+                            }
                     }
                 }
                 if (strFor.equals("user")) {
                     for (Log log : logs) {
-
-                        if (log.getName().equals(dataQuery)) {
-                            rezultSet.add(log.getEvent());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getName().equals(dataQuery)) {
+                                rezultSet.add(log.getEvent());
+                            }
                     }
                 }
                 if (strFor.equals("date")) {
@@ -1177,18 +1217,20 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                         e.printStackTrace();
                     }
                     for (Log log : logs) {
-
-                        if (log.getDate().equals(parse)) {
-                            rezultSet.add(log.getEvent());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getDate().equals(parse)) {
+                                rezultSet.add(log.getEvent());
+                            }
                     }
                 }
                 if (strFor.equals("status")) {
                     for (Log log : logs) {
-
-                        if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
-                            rezultSet.add(log.getEvent());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getStatus().equals(convertStringToStatus(dataQuery))) {
+                                rezultSet.add(log.getEvent());
+                            }
                     }
                 }
 
@@ -1196,18 +1238,20 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
             case "status":
                 if (strFor.equals("ip")) {
                     for (Log log : logs) {
-
-                        if (log.getIp().equals(dataQuery)) {
-                            rezultSet.add(log.getStatus());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getIp().equals(dataQuery)) {
+                                rezultSet.add(log.getStatus());
+                            }
                     }
                 }
                 if (strFor.equals("user")) {
                     for (Log log : logs) {
-
-                        if (log.getName().equals(dataQuery)) {
-                            rezultSet.add(log.getStatus());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getName().equals(dataQuery)) {
+                                rezultSet.add(log.getStatus());
+                            }
                     }
                 }
                 if (strFor.equals("date")) {
@@ -1218,18 +1262,20 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                         e.printStackTrace();
                     }
                     for (Log log : logs) {
-
-                        if (log.getDate().equals(parse)) {
-                            rezultSet.add(log.getStatus());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getDate().equals(parse)) {
+                                rezultSet.add(log.getStatus());
+                            }
                     }
                 }
                 if (strFor.equals("event")) {
                     for (Log log : logs) {
-
-                        if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
-                            rezultSet.add(log.getStatus());
-                        }
+                        Date dateLog = log.getDate();
+                        if (dateLog.before(before) && dateLog.after(after) || dateLog.equals(before) || dateLog.equals(after))
+                            if (log.getEvent().equals(convertStringToEvent(dataQuery))) {
+                                rezultSet.add(log.getStatus());
+                            }
                     }
                 }
                 break;

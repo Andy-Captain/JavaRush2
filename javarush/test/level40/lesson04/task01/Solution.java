@@ -1,6 +1,7 @@
 package com.javarush.test.level40.lesson04.task01;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -18,8 +19,16 @@ public class Solution {
     public void sendPost(URL url, String urlParameters) throws Exception {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        connection.setRequestMethod("GET");
+        connection.setRequestMethod("POST");
+
         connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+        connection.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
 
         int responseCode = connection.getResponseCode();
         System.out.println("Response Code: " + responseCode);

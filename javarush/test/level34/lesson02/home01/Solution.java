@@ -1,6 +1,9 @@
 package com.javarush.test.level34.lesson02.home01;
 
-import java.util.LinkedList;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.text.DecimalFormat;
+import java.util.Locale;
 
 /* Рекурсия для мат.выражения
 На вход подается строка - математическое выражение.
@@ -20,174 +23,125 @@ sin(2*(-5+1.5*4)+28)
 public class Solution {
     public static void main(String[] args) {
         Solution solution = new Solution();
-        //solution.recursion("sin(2*(-5+1.5*4)+28)", 0); //expected output 0.5 6
-        // solution.recursion("sin(2*((-5+1.5*4))+28)", 0); //expected output 0.5 6
-//        System.out.println(Solution.eval("- 5 + 1.5 * 4 / 6"));
-        //  System.out.println(Solution.eval("-2+2/5*3"));
-        //System.out.println(Solution.eval("(8-5)-(5+15*4)"));
-       // System.out.println(Solution.eval("-2.5*(-0.5+15.2*4)+28"));
-      // System.out.println(Solution.eval("sin(2*(-5+1.5*4)+28)"));
-      // System.out.println(Solution.eval("sin(2)"));
-      System.out.println(Solution.eval("2+3"));
+        solution.recursion("sin(2*(-5+1.5*4)+28)", 0); //expected output 0.5 6
+
 
     }
 
     public void recursion(final String expression, int countOperation) {
-        char[] chars = expression.toCharArray();
-        int firstBracket = 0;
-        int lastBracket = 0;
-        for (int i = 0; i < chars.length; i++) {
-
-            if (chars[i] == '(')    // находим индексы выражения в скобках
-            {
-                firstBracket = i;
-                for (int j = i + 1; j < chars.length; j++) {
-                    if (chars[j] == '(') {
-                        break;
-                    }
-                    if (chars[j] == ')') {
-                        lastBracket = j;
-                        break;
-                    }
-
-                }
-
-
+                //implement
+        Locale.setDefault(Locale.ENGLISH);
+        DecimalFormat df = new DecimalFormat("#.##");
+        String value = expression.replaceAll(" ", "");
+        int currentCountOperation = countOperation + 1;
+        int inside = 0;
+        int p1 = -1, p2 = -1, p3 = -1;
+        char[] s = value.toCharArray();
+        for (int i = s.length - 1; i >= 0; i--) {
+            switch (s[i]) {
+                case '^':
+                    if (inside == 0 && p3 == -1) p3 = i;
+                    break;
+                case '*':
+                case '/':
+                    if (inside == 0 && p2 == -1) p2 = i;
+                    break;
+                case '+':
+                case '-':
+                    if (inside == 0 && p1 == -1) p1 = i;
+                    break;
+                case '(':
+                    inside++;
+                    break;
+                case ')':
+                    inside--;
+                    break;
             }
-
-
         }
-        System.out.println(firstBracket + " " + lastBracket);
-
-        //implement
-    }
-
-    //    public double rezultSimpleExpression(String exp)    // -5+1.5*4/6
-//    {
-//        double rez = 0;
-//        while(exp.contains("*")){
-//
-//
-//
-//
-//
-//
-//        }
-//
-//
-//
-//    }
-//    static boolean isDelim(char c) { // тру если пробел
-//        return c == ' ';
-//    }
-
-    static boolean isOperator(char c) { // возвращяем тру если один из символов ниже
-        return c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == 's' || c == 'c' || c == 't';
-    }
-
-
-    static int priority(char op) {
-        switch (op) { // при + или - возврат 1, при * / % 2 иначе -1
-            case 's':
-            case 'c':
-            case 't':
-                return 1;
-
-            case '+':
-            case '-':
-                return 2;
-            case '*':
-            case '/':
-
-                return 3;
-            case '^':
-                return 4;
-
-            default:
-                return -1;
+        if (p1 != -1) p2 = p1;
+        if (p2 != -1) p3 = p2;
+        if (p3 != -1) {
+            PrintStream oldStream = System.out;
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PrintStream newStream = new PrintStream(outputStream);
+            System.setOut(newStream);
+            recursion(value.substring(0, p3), currentCountOperation);
+            String[] part1 = outputStream.toString().split("\\s");
+            currentCountOperation = currentCountOperation < Integer.parseInt(part1[1]) ? Integer.parseInt(part1[1]) : currentCountOperation;
+            outputStream.reset();
+            recursion(value.substring(p3 + 1), currentCountOperation);
+            String[] part2 = outputStream.toString().split("\\s");
+            currentCountOperation = currentCountOperation < Integer.parseInt(part2[1]) ? Integer.parseInt(part2[1]) : currentCountOperation;
+            System.setOut(oldStream);
+            switch (s[p3]) {
+                case '^':
+                    customPrint(df, Math.rint(100.0 *(Math.pow(Double.parseDouble(part1[0]), Double.parseDouble(part2[0]))))/100, countOperation, currentCountOperation);
+                    return;
+                case '*':
+                    customPrint(df,  Math.rint(100.0 *(Double.parseDouble(part1[0]) * Double.parseDouble(part2[0])))/100, countOperation, currentCountOperation);
+                    return;
+                case '/':
+                    customPrint(df,  Math.rint(100.0 *(Double.parseDouble(part1[0]) / Double.parseDouble(part2[0])))/100, countOperation, currentCountOperation);
+                    return;
+                case '+':
+                    customPrint(df,  Math.rint(100.0 *(Double.parseDouble(part1[0]) + Double.parseDouble(part2[0])))/100, countOperation, currentCountOperation);
+                    return;
+                case '-':
+                    customPrint(df,  Math.rint(100.0 *(Double.parseDouble(part1[0]) - Double.parseDouble(part2[0])))/100, countOperation, currentCountOperation);
+                    return;
+            }
         }
+        if (s.length > 0 && s[0] == '(' && s[s.length - 1] == ')') {
+            recursion(value.substring(1, s.length - 1), countOperation);
+            return;
+        }
+        if (s.length > 5 && Character.isAlphabetic(s[0]) && s[3] == '(' && s[s.length - 1] == ')') {
+            String funcName = value.substring(0, 3);
+            PrintStream oldStream = System.out;
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PrintStream newStream = new PrintStream(outputStream);
+            System.setOut(newStream);
+            recursion(value.substring(4, s.length - 1), currentCountOperation);
+            String[] part = outputStream.toString().split("\\s");
+            currentCountOperation = currentCountOperation < Integer.parseInt(part[1]) ? Integer.parseInt(part[1]) : currentCountOperation;
+            System.setOut(oldStream);
+            if ("sin".equals(funcName)) {
+                customPrint(df,  Math.rint(100.0 *(Math.sin(Math.toRadians(Double.parseDouble(part[0])))))/100, countOperation, currentCountOperation);
+                return;
+            }
+            if ("cos".equals(funcName)) {
+                customPrint(df,  Math.rint(100.0 *(Math.cos(Math.toRadians(Double.parseDouble(part[0])))))/100, countOperation, currentCountOperation);
+                return;
+            }
+            if ("tan".equals(funcName)) {
+                customPrint(df,  Math.rint(100.0 *(Math.tan(Math.toRadians(Double.parseDouble(part[0])))))/100, countOperation, currentCountOperation);
+                return;
+            }
+        }
+        double n = 0d;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length && (Character.isDigit(s[i]) || s[i] == '.'); i++) {
+            sb.append(s[i]);
+        }
+        if (sb.length() > 0) {
+            n = Double.parseDouble(sb.toString());
+        }
+        customPrint(df, n, countOperation, countOperation);
     }
+    private void customPrint(DecimalFormat df, double v, int countOperation, int currentCountOperation) {
+        v = (Math.rint(100.0 * v) / 100);
+        String rez = String.valueOf(v);
+        if (rez.endsWith(".0"))
+        {
+            rez = rez.replace(".0","");
+        }
 
-
-    static void processOperator(LinkedList<Double> st, char op) {
-        double r = 0;
-        double l = 0;
-        if (op != 's' || op != 'c' || op != 't') {
-            r = st.removeLast(); // выдёргиваем из упорядоченного листа последний элемент
-            l = st.removeLast(); // также
+        if (countOperation == 0) {
+            System.out.println(rez + " " + currentCountOperation);
         } else {
-            r = st.removeLast();
-        }
-        switch (op) { // выполняем действие между l и r в зависимости от оператора в кейсе и результат валим в st
-            case '+':
-                st.add(l + r);
-                break;
-            case '-':
-                st.add(l - r);
-                break;
-            case '*':
-                st.add(l * r);
-                break;
-            case '/':
-                st.add(l / r);
-                break;
-            case '^':
-                st.add(Math.pow(l, r));
-                break;
-            case 's':
-                st.add(Math.sin(Math.toRadians(r)));
-                break;
-            case 'c':
-                st.add(Math.cos(Math.toRadians(r)));
-                break;
-            case 't':
-                st.add(Math.tan(Math.toRadians(r)));
-                break;
-
+            System.out.println(rez + " " + currentCountOperation);
         }
     }
-
-
-    public static double eval(String s) {
-        if (s.charAt(0) == '-') {
-            s = 0 + s;
-        }
-
-        s = s.replaceAll("\\(-", "(0-");
-        s = s.replaceAll("sin","s");
-        s = s.replaceAll("cos","c");
-        s = s.replaceAll("tan","t");
-        System.out.println(s);
-        LinkedList<Double> st = new LinkedList<Double>(); // сюда наваливают цифры
-        LinkedList<Character> op = new LinkedList<Character>(); // сюда опрераторы и st и op в порядке поступления
-        for (int i = 0; i < s.length(); i++) { // парсим строку с выражением и вычисляем
-            char c = s.charAt(i);
-//            if (isDelim(c))
-//                continue;
-            if (c == '(')
-                op.add('(');
-            else if (c == ')') {
-                while (op.getLast() != '(')
-                    processOperator(st, op.removeLast());
-                op.removeLast();
-            } else if (isOperator(c)) {
-                while (!op.isEmpty() && priority(op.getLast()) >= priority(c))
-                    processOperator(st, op.removeLast());
-                op.add(c);
-            } else {
-                String operand = "";
-
-                while (i < s.length() && (Character.isDigit(s.charAt(i)) || s.charAt(i) =='.'))
-                    operand += s.charAt(i++);
-                --i;
-                st.add(Double.parseDouble(operand));
-            }
-        }
-        while (!op.isEmpty())
-            processOperator(st, op.removeLast());
-        return st.get(0);  // возврат результата
-    }
-
     public Solution() {
         //don't delete
     }
